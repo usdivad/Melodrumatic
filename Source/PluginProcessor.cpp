@@ -32,6 +32,9 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     
     _delayTimeInSamples = 0;
     _delayReadHead = 0;
+    
+    _feedbackLeft = 0;
+    _feedbackRight = 0;
 }
 
 DaalDel2AudioProcessor::~DaalDel2AudioProcessor()
@@ -194,9 +197,11 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     
     // Write to circular buffer
     for (int i=0; i<buffer.getNumSamples(); i++) {
+        
         // Write sample to circular buffer
-        _circularBufferLeft[_circularBufferWriteHead] = leftChannel[i];
-        _circularBufferRight[_circularBufferWriteHead] = rightChannel[i];
+        // and also add feedback
+        _circularBufferLeft[_circularBufferWriteHead] = leftChannel[i] + _feedbackLeft;
+        _circularBufferRight[_circularBufferWriteHead] = rightChannel[i] + _feedbackRight;
         
         // Read from delayed position in buffer
         _delayReadHead = _circularBufferWriteHead - _delayTimeInSamples;
@@ -204,10 +209,19 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
             _delayReadHead += _circularBufferLength;
         }
         
+        // Get current delay sample for applying feedback
+        // (For some reason this crashes in Reaper but not Ableton)
+        float delaySampleLeft = _circularBufferLeft[(int)_delayReadHead];
+        float delaySampleRight = _circularBufferRight[(int)_delayReadHead];
+        
+        // Apply feedback (for next iteration)
+        _feedbackLeft = delaySampleLeft * FEEDBACK_RATE;
+        _feedbackRight = delaySampleRight * FEEDBACK_RATE;
+        
         // Add the samples to the output buffer
         // (We can use setSample if we want the pure delayed signal)
-        buffer.addSample(0, i, _circularBufferLeft[(int)_delayReadHead]);
-        buffer.addSample(1, i, _circularBufferRight[(int)_delayReadHead]);
+        buffer.addSample(0, i, delaySampleLeft);
+        buffer.addSample(1, i, delaySampleRight);
         
         // Increment write head
         // _circularBufferWriteHead = (_circularBufferWriteHead + 1) % _circularBufferLength;

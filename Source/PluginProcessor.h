@@ -14,6 +14,7 @@
 
 #define MAX_DELAY_TIME_IN_SECONDS 2
 #define DELAY_TIME_IN_SECONDS 0.5
+#define FEEDBACK_RATE 0.8
 
 //==============================================================================
 /**
@@ -69,6 +70,10 @@ private:
     // Delay
     float _delayTimeInSamples;
     float _delayReadHead;
+    
+    // Feedback
+    float _feedbackLeft;
+    float _feedbackRight;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DaalDel2AudioProcessor)
