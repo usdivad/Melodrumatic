@@ -35,6 +35,8 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     
     _feedbackLeft = 0;
     _feedbackRight = 0;
+    
+    _dryWet = 0.5;
 }
 
 DaalDel2AudioProcessor::~DaalDel2AudioProcessor()
@@ -218,10 +220,16 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
         _feedbackLeft = delaySampleLeft * FEEDBACK_RATE;
         _feedbackRight = delaySampleRight * FEEDBACK_RATE;
         
-        // Add the samples to the output buffer
-        // (We can use setSample if we want the pure delayed signal)
-        buffer.addSample(0, i, delaySampleLeft);
-        buffer.addSample(1, i, delaySampleRight);
+        // // Add the samples to the output buffer
+        // buffer.addSample(0, i, delaySampleLeft);
+        // buffer.addSample(1, i, delaySampleRight);
+        
+        // Sum the dry and wet (delayed) samples
+        buffer.setSample(0, i, (buffer.getSample(0, i) * _dryWet) +
+                               (delaySampleLeft * (1 - _dryWet)));
+        buffer.setSample(1, i, (buffer.getSample(1, i) * _dryWet) +
+                         (delaySampleLeft * (1 - _dryWet)));
+        
         
         // Increment write head
         // _circularBufferWriteHead = (_circularBufferWriteHead + 1) % _circularBufferLength;

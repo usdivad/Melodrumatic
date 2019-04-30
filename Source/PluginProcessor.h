@@ -75,6 +75,9 @@ private:
     float _feedbackLeft;
     float _feedbackRight;
     
+    // Dry/wet
+    float _dryWet;
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DaalDel2AudioProcessor)
 };
