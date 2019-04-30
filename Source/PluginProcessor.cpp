@@ -36,7 +36,11 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     _feedbackLeft = 0;
     _feedbackRight = 0;
     
-    _dryWet = 0.5;
+    
+    // Parameters
+    addParameter(_dryWetParam = new AudioParameterFloat("dryWet", "Dry/Wet", 0, 1, 0.5));
+    addParameter(_feedbackParam = new AudioParameterFloat("feedback", "Feedback", 0, 0.98, 0.5));
+    addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", 0.01, MAX_DELAY_TIME_IN_SECONDS, 0.5));
 }
 
 DaalDel2AudioProcessor::~DaalDel2AudioProcessor()
@@ -121,7 +125,7 @@ void DaalDel2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     // initialisation that you need..
     
     // Delay time
-    _delayTimeInSamples = sampleRate * DELAY_TIME_IN_SECONDS;
+    _delayTimeInSamples = sampleRate * _delayTimeParam->get();
     
     // Initialize circular buffers based on sample rate and delay time
     _circularBufferLength = (int)(sampleRate * MAX_DELAY_TIME_IN_SECONDS);
@@ -192,6 +196,8 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 //         // ..do something to the data...
 //     }
     
+    // Update sample rate
+    _delayTimeInSamples = getSampleRate() * _delayTimeParam->get();
     
     // Get write pointers for left and right channels
     float* leftChannel = buffer.getWritePointer(0);
@@ -217,18 +223,18 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
         float delaySampleRight = _circularBufferRight[(int)_delayReadHead];
         
         // Apply feedback (for next iteration)
-        _feedbackLeft = delaySampleLeft * FEEDBACK_RATE;
-        _feedbackRight = delaySampleRight * FEEDBACK_RATE;
+        _feedbackLeft = delaySampleLeft * _feedbackParam->get();
+        _feedbackRight = delaySampleRight * _feedbackParam->get();
         
         // // Add the samples to the output buffer
         // buffer.addSample(0, i, delaySampleLeft);
         // buffer.addSample(1, i, delaySampleRight);
         
         // Sum the dry and wet (delayed) samples
-        buffer.setSample(0, i, (buffer.getSample(0, i) * _dryWet) +
-                               (delaySampleLeft * (1 - _dryWet)));
-        buffer.setSample(1, i, (buffer.getSample(1, i) * _dryWet) +
-                         (delaySampleLeft * (1 - _dryWet)));
+        buffer.setSample(0, i, (buffer.getSample(0, i) * _dryWetParam->get()) +
+                               (delaySampleLeft * (1 - _dryWetParam->get())));
+        buffer.setSample(1, i, (buffer.getSample(1, i) * _dryWetParam->get()) +
+                         (delaySampleLeft * (1 - _dryWetParam->get())));
         
         
         // Increment write head

@@ -75,8 +75,10 @@ private:
     float _feedbackLeft;
     float _feedbackRight;
     
-    // Dry/wet
-    float _dryWet;
+    // User-controlled parameters
+    AudioParameterFloat* _dryWetParam;
+    AudioParameterFloat* _feedbackParam;
+    AudioParameterFloat* _delayTimeParam;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DaalDel2AudioProcessor)
