@@ -127,10 +127,22 @@ void DaalDel2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     // Delay time
     _delayTimeInSamples = sampleRate * _delayTimeParam->get();
     
-    // Initialize circular buffers based on sample rate and delay time
+    
+    // Calculate circular buffer length based on sample rate
     _circularBufferLength = (int)(sampleRate * MAX_DELAY_TIME_IN_SECONDS);
+    
+    // Initialize circular buffers based on sample rate and delay time
+    // The nullptr setting allows for changing sample rates in the middle of a session
+    if (_circularBufferLeft != nullptr) { // Left
+        delete [] _circularBufferLeft;
+        _circularBufferLeft = nullptr;
+    }
     if (_circularBufferLeft == nullptr) {
         _circularBufferLeft = new float[_circularBufferLength];
+    }
+    if (_circularBufferRight != nullptr) { // Right
+        delete [] _circularBufferRight;
+        _circularBufferRight = nullptr;
     }
     if (_circularBufferRight == nullptr) {
         _circularBufferRight = new float[_circularBufferLength];
@@ -218,7 +230,6 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
         }
         
         // Get current delay sample for applying feedback
-        // (For some reason this crashes in Reaper but not Ableton)
         float delaySampleLeft = _circularBufferLeft[(int)_delayReadHead];
         float delaySampleRight = _circularBufferRight[(int)_delayReadHead];
         
