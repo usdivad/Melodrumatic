@@ -59,6 +59,11 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    
+    //==============================================================================
+    float lerp(float x0, float x1, float t); // t = "inPhase"
+    
+    
 private:
     //==============================================================================
     // Circular buffer
@@ -70,6 +75,7 @@ private:
     // Delay
     float _delayTimeInSamples;
     float _delayReadHead;
+    
     
     // Feedback
     float _feedbackLeft;

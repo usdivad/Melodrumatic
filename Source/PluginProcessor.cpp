@@ -229,9 +229,21 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
             _delayReadHead += _circularBufferLength;
         }
         
+        // Lerp!
+        int delayReadHeadIntX0 = (int) _delayReadHead; // x0
+        float delayReadHeadRemainderX0 = _delayReadHead - delayReadHeadIntX0; // t, i.e. inPhase
+        int delayReadHeadIntX1 = delayReadHeadIntX0 + 1; // x1
+        if (delayReadHeadIntX1 >= _circularBufferLength) {
+            delayReadHeadIntX1 -= _circularBufferLength;
+        }
+        
         // Get current delay sample for applying feedback
-        float delaySampleLeft = _circularBufferLeft[(int)_delayReadHead];
-        float delaySampleRight = _circularBufferRight[(int)_delayReadHead];
+        float delaySampleLeft = lerp(_circularBufferLeft[(int)delayReadHeadIntX0],
+                                     _circularBufferLeft[(int)delayReadHeadIntX1],
+                                     delayReadHeadRemainderX0);
+        float delaySampleRight = lerp(_circularBufferRight[(int)delayReadHeadIntX0],
+                                     _circularBufferRight[(int)delayReadHeadIntX1],
+                                     delayReadHeadRemainderX0);
         
         // Apply feedback (for next iteration)
         _feedbackLeft = delaySampleLeft * _feedbackParam->get();
@@ -280,6 +292,12 @@ void DaalDel2AudioProcessor::setStateInformation (const void* data, int sizeInBy
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+//==============================================================================
+float DaalDel2AudioProcessor::lerp(float x0, float x1, float t)
+{
+    return (1 - t) * x0 + t * x1;
 }
 
 //==============================================================================
