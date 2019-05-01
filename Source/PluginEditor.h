@@ -30,6 +30,12 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     DaalDel2AudioProcessor& processor;
+    
+    //==============================================================================
+    // Sliders
+    Slider _dryWetSlider;
+    Slider _feedbackSlider;
+    Slider _delayTimeSlider;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DaalDel2AudioProcessorEditor)
 };

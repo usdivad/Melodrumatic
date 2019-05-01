@@ -242,10 +242,10 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
         // buffer.addSample(1, i, delaySampleRight);
         
         // Sum the dry and wet (delayed) samples
-        buffer.setSample(0, i, (buffer.getSample(0, i) * _dryWetParam->get()) +
-                               (delaySampleLeft * (1 - _dryWetParam->get())));
-        buffer.setSample(1, i, (buffer.getSample(1, i) * _dryWetParam->get()) +
-                         (delaySampleLeft * (1 - _dryWetParam->get())));
+        buffer.setSample(0, i, (buffer.getSample(0, i) * (1 - _dryWetParam->get())) +
+                               (delaySampleLeft * _dryWetParam->get()));
+        buffer.setSample(1, i, (buffer.getSample(1, i) * (1 - _dryWetParam->get())) +
+                         (delaySampleLeft * _dryWetParam->get()));
         
         
         // Increment write head
