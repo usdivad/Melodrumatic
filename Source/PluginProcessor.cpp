@@ -32,6 +32,7 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     
     _delayTimeInSamples = 0;
     _delayReadHead = 0;
+    _delayTimeSmoothed = 0;
     
     _feedbackLeft = 0;
     _feedbackRight = 0;
@@ -126,7 +127,7 @@ void DaalDel2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     
     // Delay time
     _delayTimeInSamples = sampleRate * _delayTimeParam->get();
-    
+    _delayTimeSmoothed = _delayTimeParam->get();
     
     // Calculate circular buffer length based on sample rate
     _circularBufferLength = (int)(sampleRate * MAX_DELAY_TIME_IN_SECONDS);
@@ -140,6 +141,8 @@ void DaalDel2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     if (_circularBufferLeft == nullptr) {
         _circularBufferLeft = new float[_circularBufferLength];
     }
+    zeromem(_circularBufferLeft, _circularBufferLength * sizeof(float));
+    
     if (_circularBufferRight != nullptr) { // Right
         delete [] _circularBufferRight;
         _circularBufferRight = nullptr;
@@ -147,6 +150,9 @@ void DaalDel2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     if (_circularBufferRight == nullptr) {
         _circularBufferRight = new float[_circularBufferLength];
     }
+    zeromem(_circularBufferLeft, _circularBufferLength * sizeof(float));
+    
+    // Initialize write head
     _circularBufferWriteHead = 0;
 }
 
@@ -208,15 +214,18 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 //         // ..do something to the data...
 //     }
     
-    // Update sample rate
-    _delayTimeInSamples = getSampleRate() * _delayTimeParam->get();
-    
     // Get write pointers for left and right channels
     float* leftChannel = buffer.getWritePointer(0);
     float* rightChannel = buffer.getWritePointer(1);
     
     // Write to circular buffer
     for (int i=0; i<buffer.getNumSamples(); i++) {
+        
+        // Smooth delay
+        _delayTimeSmoothed = _delayTimeSmoothed - (DELAY_TIME_SMOOTH_AMOUNT * (_delayTimeSmoothed - _delayTimeParam->get()));
+        
+        // Update sample rate if need be (also use smoothed delay time)
+        _delayTimeInSamples = getSampleRate() * _delayTimeSmoothed;
         
         // Write sample to circular buffer
         // and also add feedback

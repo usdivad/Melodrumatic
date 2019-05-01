@@ -13,8 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #define MAX_DELAY_TIME_IN_SECONDS 2
-#define DELAY_TIME_IN_SECONDS 0.5
-#define FEEDBACK_RATE 0.8
+#define DELAY_TIME_SMOOTH_AMOUNT 0.001
 
 //==============================================================================
 /**
@@ -75,7 +74,7 @@ private:
     // Delay
     float _delayTimeInSamples;
     float _delayReadHead;
-    
+    float _delayTimeSmoothed;
     
     // Feedback
     float _feedbackLeft;
