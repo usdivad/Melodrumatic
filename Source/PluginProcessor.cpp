@@ -41,8 +41,8 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     // Parameters
     addParameter(_dryWetParam = new AudioParameterFloat("dryWet", "Dry/Wet", 0, 1, 0.5));
     addParameter(_feedbackParam = new AudioParameterFloat("feedback", "Feedback", 0, 0.98, 0.5));
-    // addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", 0.01, MAX_DELAY_TIME_IN_SECONDS, 0.5));
-    addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", MIN_DELAY_TIME_IN_SECONDS, MAX_DELAY_TIME_IN_SECONDS, MAX_DELAY_TIME_IN_SECONDS));
+    // addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", 0.01, _maxDelayTime, 0.5));
+    addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", _minDelayTime, _maxDelayTime, _maxDelayTime));
 }
 
 DaalDel2AudioProcessor::~DaalDel2AudioProcessor()
@@ -131,7 +131,7 @@ void DaalDel2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     _delayTimeSmoothed = _delayTimeParam->get();
     
     // Calculate circular buffer length based on sample rate
-    _circularBufferLength = (int)(sampleRate * MAX_DELAY_TIME_IN_SECONDS);
+    _circularBufferLength = (int)(sampleRate * _maxDelayTime);
     
     // Initialize circular buffers based on sample rate and delay time
     // The nullptr setting allows for changing sample rates in the middle of a session
@@ -223,10 +223,10 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     for (int i=0; i<buffer.getNumSamples(); i++) {
         
         // Smooth delay
-        _delayTimeSmoothed = _delayTimeSmoothed - (DELAY_TIME_SMOOTH_AMOUNT * (_delayTimeSmoothed - _delayTimeParam->get()));
+        _delayTimeSmoothed = _delayTimeSmoothed - (_delayTimeSmoothAmount * (_delayTimeSmoothed - _delayTimeParam->get()));
         
         // Update delay time in samples based on sample rate, smoothed, and multiplier
-        _delayTimeInSamples = getSampleRate() * _delayTimeSmoothed * DELAY_TIME_MULTIPLIER;
+        _delayTimeInSamples = getSampleRate() * _delayTimeSmoothed * _delayTimeMultiplier;
         
         // Write sample to circular buffer
         // and also add feedback

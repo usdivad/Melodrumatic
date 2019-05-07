@@ -12,11 +12,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#define MIN_DELAY_TIME_IN_SECONDS 0.1
-#define MAX_DELAY_TIME_IN_SECONDS 60.0
-#define DELAY_TIME_SMOOTH_AMOUNT 0.001
-#define DELAY_TIME_MULTIPLIER 0.001
-
 //==============================================================================
 /**
 */
@@ -66,6 +61,13 @@ public:
     
     
 private:
+    //==============================================================================
+    // Constants for delay
+    const float _minDelayTime = 0.1; // Min and max time are no longer in seconds due to multiplier
+    const float _maxDelayTime = 60.0;
+    const float _delayTimeSmoothAmount = 0.001;
+    const float _delayTimeMultiplier = 0.001;
+    
     //==============================================================================
     // Circular buffer
     float* _circularBufferLeft;
