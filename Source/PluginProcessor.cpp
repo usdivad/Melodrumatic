@@ -41,7 +41,8 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     // Parameters
     addParameter(_dryWetParam = new AudioParameterFloat("dryWet", "Dry/Wet", 0, 1, 0.5));
     addParameter(_feedbackParam = new AudioParameterFloat("feedback", "Feedback", 0, 0.98, 0.5));
-    addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", 0.01, MAX_DELAY_TIME_IN_SECONDS, 0.5));
+    // addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", 0.01, MAX_DELAY_TIME_IN_SECONDS, 0.5));
+    addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", MIN_DELAY_TIME_IN_SECONDS, MAX_DELAY_TIME_IN_SECONDS, MAX_DELAY_TIME_IN_SECONDS));
 }
 
 DaalDel2AudioProcessor::~DaalDel2AudioProcessor()
@@ -224,8 +225,8 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
         // Smooth delay
         _delayTimeSmoothed = _delayTimeSmoothed - (DELAY_TIME_SMOOTH_AMOUNT * (_delayTimeSmoothed - _delayTimeParam->get()));
         
-        // Update sample rate if need be (also use smoothed delay time)
-        _delayTimeInSamples = getSampleRate() * _delayTimeSmoothed;
+        // Update delay time in samples based on sample rate, smoothed, and multiplier
+        _delayTimeInSamples = getSampleRate() * _delayTimeSmoothed * DELAY_TIME_MULTIPLIER;
         
         // Write sample to circular buffer
         // and also add feedback
@@ -233,6 +234,7 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
         _circularBufferRight[_circularBufferWriteHead] = rightChannel[i] + _feedbackRight;
         
         // Read from delayed position in buffer
+        // _delayReadHead = _circularBufferWriteHead - _delayTimeInSamples;
         _delayReadHead = _circularBufferWriteHead - _delayTimeInSamples;
         if (_delayReadHead < 0) {
             _delayReadHead += _circularBufferLength;

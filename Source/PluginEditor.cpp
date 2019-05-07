@@ -71,6 +71,7 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
     
     _delayTimeSlider.onValueChange = [this, delayTimeParam] {
         *delayTimeParam = _delayTimeSlider.getValue();
+        DBG("delayTimeParam=" << *delayTimeParam);
     };
     _delayTimeSlider.onDragStart = [delayTimeParam] {
         delayTimeParam->beginChangeGesture();

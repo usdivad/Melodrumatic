@@ -12,8 +12,10 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#define MAX_DELAY_TIME_IN_SECONDS 2
+#define MIN_DELAY_TIME_IN_SECONDS 0.1
+#define MAX_DELAY_TIME_IN_SECONDS 60.0
 #define DELAY_TIME_SMOOTH_AMOUNT 0.001
+#define DELAY_TIME_MULTIPLIER 0.001
 
 //==============================================================================
 /**
