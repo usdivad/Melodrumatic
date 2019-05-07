@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="esd5qn" name="DaalDel2" projectType="audioplug" jucerVersion="5.4.3"
-              companyName="usdivad">
+              companyName="usdivad" pluginCharacteristicsValue="pluginWantsMidiIn">
   <MAINGROUP id="HOfhMn" name="DaalDel2">
     <GROUP id="{D108E745-BE2A-4105-7EB0-674D8CF6FA87}" name="Source">
       <FILE id="nDjfLZ" name="PluginProcessor.cpp" compile="1" resource="0"
