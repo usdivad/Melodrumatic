@@ -189,6 +189,26 @@ bool DaalDel2AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 
 void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
+    // ================================================================
+    // MIDI
+    
+    if (!midiMessages.isEmpty()) {
+        // Loop through MIDI messages
+        MidiBuffer::Iterator midiMessagesIterator = MidiBuffer::Iterator(midiMessages);
+        bool hasNewMidiMessages = true;
+        while (hasNewMidiMessages) {
+            MidiMessage midiMessage;
+            int midiSamplePosition;
+            hasNewMidiMessages = midiMessagesIterator.getNextEvent(midiMessage, midiSamplePosition);
+            if (!midiMessage.isSysEx()) {
+                DBG("MIDI message : " << midiMessage.getDescription()); // TEMP
+            }
+        }
+    }
+    
+    // ================================================================
+    // Audio
+    
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -216,6 +236,7 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 //     }
     
     // Get write pointers for left and right channels
+    // TODO: Ensure this works for mono and > 2 channels!
     float* leftChannel = buffer.getWritePointer(0);
     float* rightChannel = buffer.getWritePointer(1);
     
