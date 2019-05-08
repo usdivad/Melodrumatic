@@ -15,7 +15,8 @@
 //==============================================================================
 /**
 */
-class DaalDel2AudioProcessor  : public AudioProcessor
+class DaalDel2AudioProcessor  : public AudioProcessor,
+                                public InterprocessConnection
 {
 public:
     //==============================================================================
@@ -57,6 +58,12 @@ public:
 
     
     //==============================================================================
+    // InterprocessConnection virtual methods
+    void connectionMade() override;
+    void connectionLost() override;
+    void messageReceived(const MemoryBlock& message) override;
+    
+    //==============================================================================
     float lerp(float x0, float x1, float t); // t = "inPhase"
     
     
@@ -84,6 +91,13 @@ private:
     float _feedbackLeft;
     float _feedbackRight;
     
+
+    //==============================================================================
+    // Interprocess
+    const String _interprocessPipeName = "DAALDEL2_INTERPROCESS_PIPE";
+    const int _interprocessPipeTimeoutMs = 50;
+    
+    //==============================================================================
     // User-controlled parameters
     AudioParameterFloat* _dryWetParam;
     AudioParameterFloat* _feedbackParam;

@@ -21,9 +21,11 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+        InterprocessConnection(true, 0xa1b2c3d4)
 #endif
 {
+    // Audio
     // Circular buffers are set to null pointers because we don't know sample rate yet, and thus don't know how to instantiate the audio data. These will be set in prepareToPlay()
     _circularBufferLeft = nullptr;
     _circularBufferRight = nullptr;
@@ -37,6 +39,22 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     _feedbackLeft = 0;
     _feedbackRight = 0;
     
+    
+    // Interprocess
+    // Create pipe, or connect to existing pipe
+    bool isInterprocessCreatePipeSuccessful = createPipe(_interprocessPipeName, _interprocessPipeTimeoutMs, true);
+    if (!isInterprocessCreatePipeSuccessful) {
+        bool isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessPipeTimeoutMs);
+        if (!isInterprocessConnectToPipeSuccessful) {
+            DBG("Unsuccessful connection to pipe");
+        }
+        else {
+            DBG("Successfully connected to pipe");
+        }
+    }
+    else {
+        DBG("Succesfully created pipe");
+    }
     
     // Parameters
     addParameter(_dryWetParam = new AudioParameterFloat("dryWet", "Dry/Wet", 0, 1, 0.5));
@@ -324,6 +342,22 @@ void DaalDel2AudioProcessor::setStateInformation (const void* data, int sizeInBy
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+//==============================================================================
+void DaalDel2AudioProcessor::connectionMade()
+{
+    DBG("Connection made");
+}
+
+void DaalDel2AudioProcessor::connectionLost()
+{
+    DBG("Connection lost");
+}
+
+void DaalDel2AudioProcessor::messageReceived(const MemoryBlock &message)
+{
+    DBG("Message received: " << message.toString());
 }
 
 //==============================================================================
