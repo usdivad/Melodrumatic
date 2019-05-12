@@ -20,6 +20,10 @@ class DaalDel2AudioProcessor  : public AudioProcessor,
 {
 public:
     //==============================================================================
+    // Static variables
+    static bool _hasInterprocessPipeBeenCreated;
+    
+    //==============================================================================
     DaalDel2AudioProcessor();
     ~DaalDel2AudioProcessor();
 
@@ -101,9 +105,8 @@ private:
     //==============================================================================
     // Interprocess
     const int _interprocessCreatePipeTimeoutMs = -1;
-    const int _interprocessConnectToPipeTimeoutMs = -1;
+    const int _interprocessConnectToPipeTimeoutMs = -1; // TODO: Figure out whether it's better to leave this as -1 (infinite tmieout) or to set it to disconnect/reconnect at e.g. 50-100ms
     const String _interprocessPipeName = "DAALDEL2_INTERPROCESS_PIPE_007";
-    bool _didCreateInterprocessPipe;
     String _processName;
     
     //==============================================================================

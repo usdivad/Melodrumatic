@@ -12,6 +12,9 @@
 #include "PluginEditor.h"
 
 //==============================================================================
+bool DaalDel2AudioProcessor::_hasInterprocessPipeBeenCreated;
+
+//==============================================================================
 DaalDel2AudioProcessor::DaalDel2AudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
@@ -402,13 +405,20 @@ float DaalDel2AudioProcessor::lerp(float x0, float x1, float t)
 // Create pipe, or connect to existing pipe
 bool DaalDel2AudioProcessor::createOrConnectToInterprocessPipe()
 {
-    _didCreateInterprocessPipe = false;
-    // if (!_didCreateInterprocessPipe)
-    // {
-        _didCreateInterprocessPipe = createPipe(_interprocessPipeName, _interprocessCreatePipeTimeoutMs, true);
-    // }
+    // Create pipe
+    bool didCurrentInstanceCreateInterprocessPipe = false;
+    DBG("_hasInterprocessPipeBeenCreated=" << (_hasInterprocessPipeBeenCreated ? "true" : "false"));
+    if (!_hasInterprocessPipeBeenCreated)
+    {
+        _hasInterprocessPipeBeenCreated = createPipe(_interprocessPipeName, _interprocessCreatePipeTimeoutMs, false);
+        didCurrentInstanceCreateInterprocessPipe = _hasInterprocessPipeBeenCreated;
+    }
+    else {
+        // pass
+    }
     
-    if (!_didCreateInterprocessPipe) {
+    // Connect to existing pipe
+    if (!didCurrentInstanceCreateInterprocessPipe) {
         bool isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessConnectToPipeTimeoutMs);
         if (!isInterprocessConnectToPipeSuccessful) {
             DBG(_processName << " (" << _trackProperties.name << "): " << "Unsuccessful connection to pipe " << _interprocessPipeName);
