@@ -100,9 +100,9 @@ private:
 
     //==============================================================================
     // Interprocess
-    const int _interprocessCreatePipeTimeoutMs = 50;
-    const int _interprocessConnectToPipeTimeoutMs = 100;
-    const String _interprocessPipeName = "DAALDEL2_INTERPROCESS_PIPE";
+    const int _interprocessCreatePipeTimeoutMs = -1;
+    const int _interprocessConnectToPipeTimeoutMs = -1;
+    const String _interprocessPipeName = "DAALDEL2_INTERPROCESS_PIPE_007";
     bool _didCreateInterprocessPipe;
     String _processName;
     
