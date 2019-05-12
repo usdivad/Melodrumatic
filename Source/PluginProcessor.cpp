@@ -232,11 +232,11 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
             if (!midiMessage.isSysEx()) {
                 DBG(_processName << " (" << _trackProperties.name << "): " << "MIDI message : " << midiMessage.getDescription()); // TEMP
                 
+                // Only handle note-on messages
                 if (midiMessage.isNoteOn()) {
                     // Construct MIDI message in memory block
                     BigInteger midiNote = BigInteger(midiMessage.getNoteNumber());
                     MemoryBlock midiMessageToSend = MemoryBlock();
-                    // MemoryBlock midiMessageToSend = MemoryBlock(sizeof(int));
                     midiMessageToSend.insert(&midiNote, sizeof(BigInteger), 0);
                     
                     // Send message if connection was successful
@@ -391,6 +391,7 @@ void DaalDel2AudioProcessor::messageReceived(const MemoryBlock &message)
 {
     DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Message received: " << message.toString());
     
+    // Get the MIDI note from the message
     const void* messageData = message.getData();
     const BigInteger* midiNotePtr = static_cast<const BigInteger*>(messageData);
     const BigInteger midiNote = *midiNotePtr;
