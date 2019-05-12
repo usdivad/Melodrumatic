@@ -64,7 +64,10 @@ public:
     void messageReceived(const MemoryBlock& message) override;
     
     //==============================================================================
+    // Custom
     float lerp(float x0, float x1, float t); // t = "inPhase"
+    bool createOrConnectToInterprocessPipe();
+    String generateProcessName();
     
     
 private:
@@ -91,11 +94,20 @@ private:
     float _feedbackLeft;
     float _feedbackRight;
     
+    // MIDI
+    // int _mostRecentMidiNote;
+    
 
     //==============================================================================
     // Interprocess
+    const int _interprocessCreatePipeTimeoutMs = 50;
+    const int _interprocessConnectToPipeTimeoutMs = 100;
     const String _interprocessPipeName = "DAALDEL2_INTERPROCESS_PIPE";
-    const int _interprocessPipeTimeoutMs = 50;
+    bool _didCreateInterprocessPipe;
+    String _processName;
+    
+    //==============================================================================
+    TrackProperties _trackProperties;
     
     //==============================================================================
     // User-controlled parameters

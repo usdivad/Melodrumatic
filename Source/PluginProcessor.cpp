@@ -41,20 +41,9 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     
     
     // Interprocess
-    // Create pipe, or connect to existing pipe
-    bool isInterprocessCreatePipeSuccessful = createPipe(_interprocessPipeName, _interprocessPipeTimeoutMs, true);
-    if (!isInterprocessCreatePipeSuccessful) {
-        bool isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessPipeTimeoutMs);
-        if (!isInterprocessConnectToPipeSuccessful) {
-            DBG("Unsuccessful connection to pipe");
-        }
-        else {
-            DBG("Successfully connected to pipe");
-        }
-    }
-    else {
-        DBG("Succesfully created pipe");
-    }
+    // _interprocessPipeName = "DAALDEL2_INTERPROCESS_PIPE_" + generateProcessName();
+    _processName = generateProcessName();
+    createOrConnectToInterprocessPipe(); // Create pipe, or connect to existing pipe
     
     // Parameters
     addParameter(_dryWetParam = new AudioParameterFloat("dryWet", "Dry/Wet", 0, 1, 0.5));
@@ -208,6 +197,25 @@ bool DaalDel2AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     // ================================================================
+    // Interprocess
+    
+    // Connect (in case we lost the connection)
+    bool isInterprocessConnectToPipeSuccessful = isConnected();
+    if (!isInterprocessConnectToPipeSuccessful) {
+        // bool isInterprocessConnectToPipeSuccessful = createOrConnectToInterprocessPipe();
+        isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessConnectToPipeTimeoutMs);
+        
+        // Print connection status
+        if (isInterprocessConnectToPipeSuccessful) {
+            DBG(_processName << " (" << _trackProperties.name << "): " << "Reconnection to pipe succeeded");
+        }
+        else {
+            DBG(_processName << " (" << _trackProperties.name << "): " << "Reconnection to pipe failed");
+        }
+    }
+    
+    
+    // ================================================================
     // MIDI
     
     if (!midiMessages.isEmpty()) {
@@ -219,7 +227,28 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
             int midiSamplePosition;
             hasNewMidiMessages = midiMessagesIterator.getNextEvent(midiMessage, midiSamplePosition);
             if (!midiMessage.isSysEx()) {
-                DBG("MIDI message : " << midiMessage.getDescription()); // TEMP
+                DBG(_processName << " (" << _trackProperties.name << "): " << "MIDI message : " << midiMessage.getDescription()); // TEMP
+                
+                if (midiMessage.isNoteOn()) {
+                    // Construct MIDI message in memory block
+                    int midiNote = midiMessage.getNoteNumber();
+                    MemoryBlock midiMessageToSend = MemoryBlock();
+                    // MemoryBlock midiMessageToSend = MemoryBlock(sizeof(int));
+                    midiMessageToSend.insert(&midiNote, sizeof(int), 0);
+                    
+                    // Send message if connection was successful
+                    if (isInterprocessConnectToPipeSuccessful) {
+                        DBG(_processName << " (" << _trackProperties.name << "): " << "Sending MIDI message");
+                        bool didSendMessageSucceed = sendMessage(midiMessageToSend);
+                        if (didSendMessageSucceed) {
+                            DBG(_processName << " (" << _trackProperties.name << "): " << "Send message succeeded");
+                        }
+                        else {
+                            DBG(_processName << " (" << _trackProperties.name << "): " << "Send message failed");
+                        }
+                    }
+                }
+                
             }
         }
     }
@@ -347,23 +376,68 @@ void DaalDel2AudioProcessor::setStateInformation (const void* data, int sizeInBy
 //==============================================================================
 void DaalDel2AudioProcessor::connectionMade()
 {
-    DBG("Connection made");
+    DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Connection made");
 }
 
 void DaalDel2AudioProcessor::connectionLost()
 {
-    DBG("Connection lost");
+    DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Connection lost");
 }
 
 void DaalDel2AudioProcessor::messageReceived(const MemoryBlock &message)
 {
-    DBG("Message received: " << message.toString());
+    DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Message received: " << message.toString());
 }
 
 //==============================================================================
+// Custom
+
+
+// Linear interpolation
 float DaalDel2AudioProcessor::lerp(float x0, float x1, float t)
 {
     return (1 - t) * x0 + t * x1;
+}
+
+// Create pipe, or connect to existing pipe
+bool DaalDel2AudioProcessor::createOrConnectToInterprocessPipe()
+{
+    _didCreateInterprocessPipe = false;
+    // if (!_didCreateInterprocessPipe)
+    // {
+        _didCreateInterprocessPipe = createPipe(_interprocessPipeName, _interprocessCreatePipeTimeoutMs, true);
+    // }
+    
+    if (!_didCreateInterprocessPipe) {
+        bool isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessConnectToPipeTimeoutMs);
+        if (!isInterprocessConnectToPipeSuccessful) {
+            DBG(_processName << " (" << _trackProperties.name << "): " << "Unsuccessful connection to pipe " << _interprocessPipeName);
+        }
+        else {
+            DBG(_processName << " (" << _trackProperties.name << "): " << "Successfully connected to pipe " << _interprocessPipeName);
+            return true;
+        }
+    }
+    else {
+        DBG(_processName << " (" << _trackProperties.name << "): " << "Succesfully created pipe " << _interprocessPipeName);
+        return true;
+    }
+    
+    return false;
+}
+
+
+String DaalDel2AudioProcessor::generateProcessName()
+{
+    Random rng;
+    String name;
+    
+    for (int i=0; i<10; i++) {
+        int n = rng.nextInt(9);
+        name.append(String(n), 1);
+    }
+    
+    return name;
 }
 
 //==============================================================================
