@@ -205,8 +205,8 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     // Connect (in case we lost the connection)
     bool isInterprocessConnectToPipeSuccessful = isConnected();
     if (!isInterprocessConnectToPipeSuccessful) {
-        // bool isInterprocessConnectToPipeSuccessful = createOrConnectToInterprocessPipe();
-        isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessConnectToPipeTimeoutMs);
+        bool isInterprocessConnectToPipeSuccessful = createOrConnectToInterprocessPipe();
+        // isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessConnectToPipeTimeoutMs);
         
         // Print connection status
         if (isInterprocessConnectToPipeSuccessful) {
@@ -234,14 +234,14 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
                 
                 if (midiMessage.isNoteOn()) {
                     // Construct MIDI message in memory block
-                    int midiNote = midiMessage.getNoteNumber();
+                    BigInteger midiNote = BigInteger(midiMessage.getNoteNumber());
                     MemoryBlock midiMessageToSend = MemoryBlock();
                     // MemoryBlock midiMessageToSend = MemoryBlock(sizeof(int));
-                    midiMessageToSend.insert(&midiNote, sizeof(int), 0);
+                    midiMessageToSend.insert(&midiNote, sizeof(BigInteger), 0);
                     
                     // Send message if connection was successful
                     if (isInterprocessConnectToPipeSuccessful) {
-                        DBG(_processName << " (" << _trackProperties.name << "): " << "Sending MIDI message");
+                        DBG(_processName << " (" << _trackProperties.name << "): " << "Sending MIDI message " << midiNote.toString(10));
                         bool didSendMessageSucceed = sendMessage(midiMessageToSend);
                         if (didSendMessageSucceed) {
                             DBG(_processName << " (" << _trackProperties.name << "): " << "Send message succeeded");
@@ -390,6 +390,14 @@ void DaalDel2AudioProcessor::connectionLost()
 void DaalDel2AudioProcessor::messageReceived(const MemoryBlock &message)
 {
     DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Message received: " << message.toString());
+    
+    const void* messageData = message.getData();
+    const BigInteger* midiNotePtr = static_cast<const BigInteger*>(messageData);
+    const BigInteger midiNote = *midiNotePtr;
+    
+    DBG(_processName << " (" << _trackProperties.name << "): " << "The MIDI note is " << midiNote.toString(10));
+
+    
 }
 
 //==============================================================================
