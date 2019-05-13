@@ -298,8 +298,10 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
         
         // Update delay time in samples based on sample rate, smoothed, and multiplier
         float prevDelayTimeInSamples = _delayTimeInSamples;
-        // _delayTimeInSamples = getSampleRate() * _delayTimeSmoothed * _delayTimeMultiplier;
-        _delayTimeInSamples = getSampleRate() * (1 / midiNoteToHz(_delayTimeSmoothed));
+        // _delayTimeInSamples = getSampleRate() * _delayTimeSmoothed * _delayTimeMultiplier; // Using smoothed delay time with multiplier
+        _delayTimeInSamples = getSampleRate() * (1 / midiNoteToHz(_delayTimeSmoothed)); // MIDI, with smoothing
+        // _delayTimeInSamples = getSampleRate() * (1 / midiNoteToHz(_delayTimeParam->get())); // MIDI, no smoothing
+        
         if (_delayTimeInSamples != prevDelayTimeInSamples) {
             DBG(_processName << " (" << _trackProperties.name << "): " << "_delayTimeInSamples=" << _delayTimeInSamples << ", sampleRate=" << getSampleRate());
         }
@@ -472,6 +474,7 @@ String DaalDel2AudioProcessor::generateProcessName()
 float DaalDel2AudioProcessor::midiNoteToHz(float midiNote)
 {
     return (440/32) * (pow(2, (midiNote-9)/12));
+    // return 13.75 * (pow(2, (midiNote-9) * 0.08333333333)); // Not accurate enough :(
 }
 
 //==============================================================================

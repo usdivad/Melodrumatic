@@ -73,14 +73,14 @@ public:
     bool createOrConnectToInterprocessPipe();
     String generateProcessName();
     float midiNoteToHz(float midiNote);
-    
+    // double fastPow(double a, double b); // Not accurate enough
     
 private:
     //==============================================================================
     // Constants for delay
     const float _minDelayTime = 1.0; // Min and max time are basically MIDI values now
     const float _maxDelayTime = 127.0;
-    const float _delayTimeSmoothAmount = 0.001;
+    const float _delayTimeSmoothAmount = 0.1; // Higher (0.1) for discrete (MIDI note), lower (0.001) if we're going more continuous (knob/MIDI CC)
     const float _delayTimeMultiplier = 0.0004;
     
     //==============================================================================
