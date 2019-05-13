@@ -12,8 +12,8 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-bool DaalDel2AudioProcessor::_hasInterprocessPipeBeenCreated;
-int DaalDel2AudioProcessor::_numProcessesConnectedToInterprocessPipe;
+std::map<String, bool> DaalDel2AudioProcessor::_hasInterprocessPipeBeenCreated;
+std::map<String, int> DaalDel2AudioProcessor::_numProcessesConnectedToInterprocessPipe;
 
 //==============================================================================
 DaalDel2AudioProcessor::DaalDel2AudioProcessor()
@@ -48,6 +48,8 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     // _interprocessPipeName = "DAALDEL2_INTERPROCESS_PIPE_" + generateProcessName();
     _didCurrentInstanceCreateInterprocessPipe = false;
     _processName = generateProcessName();
+    _interprocessPipeSuffix = "DEFAULT";
+    initializeInterprocessStaticVariables();
     createOrConnectToInterprocessPipe(); // Create pipe, or connect to existing pipe
     
     // Parameters
@@ -72,12 +74,12 @@ DaalDel2AudioProcessor::~DaalDel2AudioProcessor()
     // Interprocess
     
     // Decrement
-    _numProcessesConnectedToInterprocessPipe--;
+    _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]--;
     
     // Reset creation flag if the creator gets destroyed
     if (_didCurrentInstanceCreateInterprocessPipe)
     {
-        _hasInterprocessPipeBeenCreated = false;
+        _hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()] = false;
     }
     
     // Disconnect
@@ -219,7 +221,7 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     // Interprocess
     
     // Connect (in case we lost the connection)
-    bool isInterprocessConnectToPipeSuccessful = isConnected() && _numProcessesConnectedToInterprocessPipe > 1;
+    bool isInterprocessConnectToPipeSuccessful = isConnected() && _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()] > 1;
     // DBG("_numProcessesConnectedToInterprocessPipe=" << _numProcessesConnectedToInterprocessPipe);
     
     if (!isInterprocessConnectToPipeSuccessful) {
@@ -446,11 +448,11 @@ bool DaalDel2AudioProcessor::createOrConnectToInterprocessPipe()
 {
     // Create pipe
     // _didCurrentInstanceCreateInterprocessPipe = false;
-    DBG("_hasInterprocessPipeBeenCreated=" << (_hasInterprocessPipeBeenCreated ? "true" : "false"));
-    if (!_hasInterprocessPipeBeenCreated)
+    DBG("_hasInterprocessPipeBeenCreated=" << (_hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()] ? "true" : "false"));
+    if (!_hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()])
     {
-        _hasInterprocessPipeBeenCreated = createPipe(_interprocessPipeName, _interprocessCreatePipeTimeoutMs, false);
-        _didCurrentInstanceCreateInterprocessPipe = _hasInterprocessPipeBeenCreated;
+        _hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()] = createPipe(getInterprocessPipeFullName(), _interprocessCreatePipeTimeoutMs, false);
+        _didCurrentInstanceCreateInterprocessPipe = _hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()];
     }
     else {
         // pass
@@ -458,19 +460,19 @@ bool DaalDel2AudioProcessor::createOrConnectToInterprocessPipe()
     
     // Connect to existing pipe
     if (!_didCurrentInstanceCreateInterprocessPipe) {
-        bool isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessConnectToPipeTimeoutMs);
+        bool isInterprocessConnectToPipeSuccessful = connectToPipe(getInterprocessPipeFullName(), _interprocessConnectToPipeTimeoutMs);
         if (!isInterprocessConnectToPipeSuccessful) {
-            DBG(_processName << " (" << _trackProperties.name << "): " << "Unsuccessful connection to pipe " << _interprocessPipeName);
+            DBG(_processName << " (" << _trackProperties.name << "): " << "Unsuccessful connection to pipe " << getInterprocessPipeFullName());
         }
         else {
-            DBG(_processName << " (" << _trackProperties.name << "): " << "Successfully connected to pipe " << _interprocessPipeName);
-            _numProcessesConnectedToInterprocessPipe++;
+            DBG(_processName << " (" << _trackProperties.name << "): " << "Successfully connected to pipe " << getInterprocessPipeFullName());
+            _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]++;
             return true;
         }
     }
     else {
-        DBG(_processName << " (" << _trackProperties.name << "): " << "Succesfully created pipe " << _interprocessPipeName);
-        _numProcessesConnectedToInterprocessPipe = 1; // Reset since we're recreating the pipe
+        DBG(_processName << " (" << _trackProperties.name << "): " << "Succesfully created pipe " << getInterprocessPipeFullName());
+        _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()] = 1; // Reset since we're recreating the pipe
         return true;
     }
     
@@ -497,6 +499,30 @@ float DaalDel2AudioProcessor::midiNoteToHz(float midiNote)
     return (440/32) * (pow(2, (midiNote-9)/12));
     // return 13.75 * (pow(2, (midiNote-9) * 0.08333333333)); // Not accurate enough :(
 }
+
+void DaalDel2AudioProcessor::initializeInterprocessStaticVariables()
+{
+    _hasInterprocessPipeBeenCreated.insert({getInterprocessPipeFullName(), false});
+    _numProcessesConnectedToInterprocessPipe.insert({getInterprocessPipeFullName(), 0});
+}
+
+
+String DaalDel2AudioProcessor::getInterprocessPipeFullName()
+{
+    return _interprocessPipeBaseName + String("_") + _interprocessPipeSuffix;
+}
+
+void DaalDel2AudioProcessor::setInterprocessPipeSuffix(String suffix)
+{
+    _interprocessPipeSuffix = suffix;
+    initializeInterprocessStaticVariables();
+}
+
+String DaalDel2AudioProcessor::getInterprocessPipeSuffix()
+{
+    return _interprocessPipeSuffix;
+}
+
 
 //==============================================================================
 // This creates new instances of the plugin..

@@ -21,8 +21,8 @@ class DaalDel2AudioProcessor  : public AudioProcessor,
 public:
     //==============================================================================
     // Static variables
-    static bool _hasInterprocessPipeBeenCreated;
-    static int _numProcessesConnectedToInterprocessPipe;
+    static std::map<String, bool> _hasInterprocessPipeBeenCreated;
+    static std::map<String, int> _numProcessesConnectedToInterprocessPipe;
     
     //==============================================================================
     DaalDel2AudioProcessor();
@@ -75,6 +75,10 @@ public:
     String generateProcessName();
     float midiNoteToHz(float midiNote);
     // double fastPow(double a, double b); // Not accurate enough
+    void initializeInterprocessStaticVariables();
+    String getInterprocessPipeFullName();
+    void setInterprocessPipeSuffix(String suffix);
+    String getInterprocessPipeSuffix();
     
 private:
     //==============================================================================
@@ -107,9 +111,10 @@ private:
     //==============================================================================
     // Interprocess
     const int _interprocessCreatePipeTimeoutMs = -1;
-    const int _interprocessConnectToPipeTimeoutMs = -1; // TODO: Figure out whether it's better to leave this as -1 (infinite tmieout) or to set it to disconnect/reconnect at e.g. 50-100ms
-    const String _interprocessPipeName = "DAALDEL2_INTERPROCESS_PIPE_007";
+    const int _interprocessConnectToPipeTimeoutMs = -1; // TODO: Figure out whether it's better to leave this as -1 (infinite timeout) or to set it to disconnect/reconnect at e.g. 50-100ms
+    const String _interprocessPipeBaseName = "DAALDEL2_INTERPROCESS_PIPE";
     String _processName;
+    String _interprocessPipeSuffix;
     bool _didCurrentInstanceCreateInterprocessPipe;
     
     //==============================================================================

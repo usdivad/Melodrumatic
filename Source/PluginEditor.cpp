@@ -81,6 +81,18 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
     };
     
     
+    // Interprocess pipe label
+    _interprocessPipeSuffixLabel.setBounds(50, 50, 100, 20);
+    _interprocessPipeSuffixLabel.setText(processor.getInterprocessPipeSuffix(), NotificationType::sendNotification);
+    // _interprocessPipeIdLabel.setText
+    _interprocessPipeSuffixLabel.setEditable(true);
+    // _interprocessPipeIdLabel.attachToComponent(&_delayTimeSlider, true);
+    addAndMakeVisible(_interprocessPipeSuffixLabel);
+    
+    _interprocessPipeSuffixLabel.onTextChange = [this] {
+        processor.setInterprocessPipeSuffix(_interprocessPipeSuffixLabel.getText());
+    };
+    
     // Timer
     startTimer(20);
 }
