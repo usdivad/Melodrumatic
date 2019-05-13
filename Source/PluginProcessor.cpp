@@ -45,6 +45,7 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     
     // Interprocess
     // _interprocessPipeName = "DAALDEL2_INTERPROCESS_PIPE_" + generateProcessName();
+    _didCurrentInstanceCreateInterprocessPipe = false;
     _processName = generateProcessName();
     createOrConnectToInterprocessPipe(); // Create pipe, or connect to existing pipe
     
@@ -65,6 +66,12 @@ DaalDel2AudioProcessor::~DaalDel2AudioProcessor()
     if (_circularBufferRight != nullptr) {
         delete [] _circularBufferRight;
         _circularBufferRight = nullptr;
+    }
+    
+    // Interprocess: reset creation flag if the creator gets destroyed
+    if (_didCurrentInstanceCreateInterprocessPipe)
+    {
+        _hasInterprocessPipeBeenCreated = false;
     }
 }
 
@@ -426,19 +433,19 @@ float DaalDel2AudioProcessor::lerp(float x0, float x1, float t)
 bool DaalDel2AudioProcessor::createOrConnectToInterprocessPipe()
 {
     // Create pipe
-    bool didCurrentInstanceCreateInterprocessPipe = false;
+    // _didCurrentInstanceCreateInterprocessPipe = false;
     DBG("_hasInterprocessPipeBeenCreated=" << (_hasInterprocessPipeBeenCreated ? "true" : "false"));
     if (!_hasInterprocessPipeBeenCreated)
     {
         _hasInterprocessPipeBeenCreated = createPipe(_interprocessPipeName, _interprocessCreatePipeTimeoutMs, false);
-        didCurrentInstanceCreateInterprocessPipe = _hasInterprocessPipeBeenCreated;
+        _didCurrentInstanceCreateInterprocessPipe = _hasInterprocessPipeBeenCreated;
     }
     else {
         // pass
     }
     
     // Connect to existing pipe
-    if (!didCurrentInstanceCreateInterprocessPipe) {
+    if (!_didCurrentInstanceCreateInterprocessPipe) {
         bool isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessConnectToPipeTimeoutMs);
         if (!isInterprocessConnectToPipeSuccessful) {
             DBG(_processName << " (" << _trackProperties.name << "): " << "Unsuccessful connection to pipe " << _interprocessPipeName);
