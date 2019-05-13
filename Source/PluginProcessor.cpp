@@ -297,7 +297,12 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
         _delayTimeSmoothed = _delayTimeSmoothed - (_delayTimeSmoothAmount * (_delayTimeSmoothed - _delayTimeParam->get()));
         
         // Update delay time in samples based on sample rate, smoothed, and multiplier
-        _delayTimeInSamples = getSampleRate() * _delayTimeSmoothed * _delayTimeMultiplier;
+        float prevDelayTimeInSamples = _delayTimeInSamples;
+        // _delayTimeInSamples = getSampleRate() * _delayTimeSmoothed * _delayTimeMultiplier;
+        _delayTimeInSamples = getSampleRate() * (1 / midiNoteToHz(_delayTimeSmoothed));
+        if (_delayTimeInSamples != prevDelayTimeInSamples) {
+            DBG(_processName << " (" << _trackProperties.name << "): " << "_delayTimeInSamples=" << _delayTimeInSamples << ", sampleRate=" << getSampleRate());
+        }
         
         // Write sample to circular buffer
         // and also add feedback
@@ -400,9 +405,9 @@ void DaalDel2AudioProcessor::messageReceived(const MemoryBlock &message)
 
     // Convert MIDI to delay time
     // TODO:
-    // - Map it properly
     // - Update UI accordingly
-    *_delayTimeParam = jmax(127.0 - midiNote.toInteger(), 1.0);
+    // *_delayTimeParam = jmax(128.0 - midiNote.toInteger(), 1.0);
+    *_delayTimeParam = jmax(midiNote.toInteger() + 1, 1);
 }
 
 //==============================================================================
@@ -449,7 +454,7 @@ bool DaalDel2AudioProcessor::createOrConnectToInterprocessPipe()
     return false;
 }
 
-
+// Generate a random process name
 String DaalDel2AudioProcessor::generateProcessName()
 {
     Random rng;
@@ -461,6 +466,12 @@ String DaalDel2AudioProcessor::generateProcessName()
     }
     
     return name;
+}
+
+// Convert MIDI note to frequency in Hz
+float DaalDel2AudioProcessor::midiNoteToHz(float midiNote)
+{
+    return (440/32) * (pow(2, (midiNote-9)/12));
 }
 
 //==============================================================================

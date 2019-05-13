@@ -72,6 +72,7 @@ public:
     float lerp(float x0, float x1, float t); // t = "inPhase"
     bool createOrConnectToInterprocessPipe();
     String generateProcessName();
+    float midiNoteToHz(float midiNote);
     
     
 private:
