@@ -26,7 +26,7 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
     AudioParameterFloat* delayTimeParam = (AudioParameterFloat*)params.getUnchecked(2);
     
     // Dry/Wet
-    _dryWetSlider.setBounds(0, 0, 100, 100);
+    _dryWetSlider.setBounds(0, 175, 100, 100);
     _dryWetSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _dryWetSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
     _dryWetSlider.setRange(dryWetParam->range.start, dryWetParam->range.end);
@@ -44,7 +44,7 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
     };
     
     // Feedback
-    _feedbackSlider.setBounds(100, 0, 100, 100);
+    _feedbackSlider.setBounds(100, 175, 100, 100);
     _feedbackSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _feedbackSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
     _feedbackSlider.setRange(feedbackParam->range.start, feedbackParam->range.end);
@@ -62,9 +62,9 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
     };
     
     // Delay time
-    _delayTimeSlider.setBounds(200, 0, 100, 100);
+    _delayTimeSlider.setBounds(125, 0, 150, 150);
     _delayTimeSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
-    _delayTimeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
+    _delayTimeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
     _delayTimeSlider.setRange(delayTimeParam->range.start, delayTimeParam->range.end);
     _delayTimeSlider.setValue(delayTimeParam->get());
     addAndMakeVisible(_delayTimeSlider);
@@ -79,6 +79,10 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
     _delayTimeSlider.onDragEnd = [delayTimeParam] {
         delayTimeParam->endChangeGesture();
     };
+    
+    
+    // Timer
+    startTimer(20);
 }
 
 DaalDel2AudioProcessorEditor::~DaalDel2AudioProcessorEditor()
@@ -100,4 +104,15 @@ void DaalDel2AudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
+}
+
+
+//==============================================================================
+void DaalDel2AudioProcessorEditor::timerCallback()
+{
+    // Update GUI based on params
+    auto& params = processor.getParameters();
+    AudioParameterFloat* delayTimeParam = (AudioParameterFloat*)params.getUnchecked(2);
+    _delayTimeSlider.setValue(delayTimeParam->get());
+    // DBG("_delayTimeSlider value = " << _delayTimeSlider.getValue());
 }

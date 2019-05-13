@@ -220,7 +220,8 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     
     // Connect (in case we lost the connection)
     bool isInterprocessConnectToPipeSuccessful = isConnected() && _numProcessesConnectedToInterprocessPipe > 1;
-    DBG("_numProcessesConnectedToInterprocessPipe=" << _numProcessesConnectedToInterprocessPipe);
+    // DBG("_numProcessesConnectedToInterprocessPipe=" << _numProcessesConnectedToInterprocessPipe);
+    
     if (!isInterprocessConnectToPipeSuccessful) {
         bool isInterprocessConnectToPipeSuccessful = createOrConnectToInterprocessPipe();
         // isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessConnectToPipeTimeoutMs);
