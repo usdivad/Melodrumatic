@@ -13,6 +13,7 @@
 
 //==============================================================================
 bool DaalDel2AudioProcessor::_hasInterprocessPipeBeenCreated;
+int DaalDel2AudioProcessor::_numProcessesConnectedToInterprocessPipe;
 
 //==============================================================================
 DaalDel2AudioProcessor::DaalDel2AudioProcessor()
@@ -68,11 +69,19 @@ DaalDel2AudioProcessor::~DaalDel2AudioProcessor()
         _circularBufferRight = nullptr;
     }
     
-    // Interprocess: reset creation flag if the creator gets destroyed
+    // Interprocess
+    
+    // Decrement
+    _numProcessesConnectedToInterprocessPipe--;
+    
+    // Reset creation flag if the creator gets destroyed
     if (_didCurrentInstanceCreateInterprocessPipe)
     {
         _hasInterprocessPipeBeenCreated = false;
     }
+    
+    // Disconnect
+    disconnect();
 }
 
 //==============================================================================
@@ -210,7 +219,8 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     // Interprocess
     
     // Connect (in case we lost the connection)
-    bool isInterprocessConnectToPipeSuccessful = isConnected();
+    bool isInterprocessConnectToPipeSuccessful = isConnected() && _numProcessesConnectedToInterprocessPipe > 1;
+    DBG("_numProcessesConnectedToInterprocessPipe=" << _numProcessesConnectedToInterprocessPipe);
     if (!isInterprocessConnectToPipeSuccessful) {
         bool isInterprocessConnectToPipeSuccessful = createOrConnectToInterprocessPipe();
         // isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessConnectToPipeTimeoutMs);
@@ -255,6 +265,7 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
                         }
                         else {
                             DBG(_processName << " (" << _trackProperties.name << "): " << "Send message failed");
+                            
                         }
                     }
                 }
@@ -452,11 +463,13 @@ bool DaalDel2AudioProcessor::createOrConnectToInterprocessPipe()
         }
         else {
             DBG(_processName << " (" << _trackProperties.name << "): " << "Successfully connected to pipe " << _interprocessPipeName);
+            _numProcessesConnectedToInterprocessPipe++;
             return true;
         }
     }
     else {
         DBG(_processName << " (" << _trackProperties.name << "): " << "Succesfully created pipe " << _interprocessPipeName);
+        _numProcessesConnectedToInterprocessPipe = 1; // Reset since we're recreating the pipe
         return true;
     }
     

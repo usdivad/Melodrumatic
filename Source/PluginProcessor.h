@@ -22,6 +22,7 @@ public:
     //==============================================================================
     // Static variables
     static bool _hasInterprocessPipeBeenCreated;
+    static int _numProcessesConnectedToInterprocessPipe;
     
     //==============================================================================
     DaalDel2AudioProcessor();
