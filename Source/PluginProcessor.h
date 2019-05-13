@@ -77,10 +77,10 @@ public:
 private:
     //==============================================================================
     // Constants for delay
-    const float _minDelayTime = 0.1; // Min and max time are no longer in seconds due to multiplier
-    const float _maxDelayTime = 60.0;
+    const float _minDelayTime = 1.0; // Min and max time are basically MIDI values now
+    const float _maxDelayTime = 127.0;
     const float _delayTimeSmoothAmount = 0.001;
-    const float _delayTimeMultiplier = 0.001;
+    const float _delayTimeMultiplier = 0.0004;
     
     //==============================================================================
     // Circular buffer

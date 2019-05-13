@@ -398,7 +398,11 @@ void DaalDel2AudioProcessor::messageReceived(const MemoryBlock &message)
     
     DBG(_processName << " (" << _trackProperties.name << "): " << "The MIDI note is " << midiNote.toString(10));
 
-    
+    // Convert MIDI to delay time
+    // TODO:
+    // - Map it properly
+    // - Update UI accordingly
+    *_delayTimeParam = jmax(127.0 - midiNote.toInteger(), 1.0);
 }
 
 //==============================================================================
