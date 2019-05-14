@@ -82,9 +82,9 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
     
     
     // Interprocess pipe label
-    _interprocessPipeSuffixLabel.setBounds(50, 50, 100, 20);
-    _interprocessPipeSuffixLabel.setText(processor.getInterprocessPipeSuffix(), NotificationType::sendNotification);
-    // _interprocessPipeIdLabel.setText
+    _interprocessPipeSuffixLabel.setBounds(25, 50, 100, 20);
+    _interprocessPipeSuffixLabel.setText(processor.getInterprocessPipeSuffix(), NotificationType::dontSendNotification);
+    _interprocessPipeSuffixLabel.setColour(Label::ColourIds::outlineColourId, Colours::white);
     _interprocessPipeSuffixLabel.setEditable(true);
     // _interprocessPipeIdLabel.attachToComponent(&_delayTimeSlider, true);
     addAndMakeVisible(_interprocessPipeSuffixLabel);
