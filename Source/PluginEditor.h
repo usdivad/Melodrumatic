@@ -41,7 +41,13 @@ private:
     Slider _feedbackSlider;
     Slider _delayTimeSlider;
     
+    Label _dryWetLabel;
+    Label _feedbackLabel;
+    Label _delayTimeLabel;
+    
     // Text
+    Label _interprocessPipeSuffixTextEditor; // Yes, it's technically a label, but it's editable
+    
     Label _interprocessPipeSuffixLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DaalDel2AudioProcessorEditor)

@@ -19,12 +19,14 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
     // editor's size to whatever you need it to be.
     setSize (400, 300);
     
+    // ================================================================
     // Get params from processor
     auto& params = processor.getParameters();
     AudioParameterFloat* dryWetParam = (AudioParameterFloat*)params.getUnchecked(0);
     AudioParameterFloat* feedbackParam = (AudioParameterFloat*)params.getUnchecked(1);
     AudioParameterFloat* delayTimeParam = (AudioParameterFloat*)params.getUnchecked(2);
     
+    // ================================================================
     // Dry/Wet
     _dryWetSlider.setBounds(0, 175, 100, 100);
     _dryWetSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
@@ -43,6 +45,12 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
         dryWetParam->endChangeGesture();
     };
     
+    _dryWetLabel.setText("Dry/Wet", NotificationType::dontSendNotification);
+    _dryWetLabel.setJustificationType(Justification::centred);
+    _dryWetLabel.attachToComponent(&_dryWetSlider, false);
+    addAndMakeVisible(_dryWetLabel);
+    
+    // ================================================================
     // Feedback
     _feedbackSlider.setBounds(100, 175, 100, 100);
     _feedbackSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
@@ -61,8 +69,14 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
         feedbackParam->endChangeGesture();
     };
     
+    _feedbackLabel.setText("Feedback", NotificationType::dontSendNotification);
+    _feedbackLabel.setJustificationType(Justification::centred);
+    _feedbackLabel.attachToComponent(&_feedbackSlider, false);
+    addAndMakeVisible(_feedbackLabel);
+    
+    // ================================================================
     // Delay time
-    _delayTimeSlider.setBounds(125, 0, 150, 150);
+    _delayTimeSlider.setBounds(200, 50, 150, 150);
     _delayTimeSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _delayTimeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
     _delayTimeSlider.setRange(delayTimeParam->range.start, delayTimeParam->range.end);
@@ -80,18 +94,29 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
         delayTimeParam->endChangeGesture();
     };
     
+    _delayTimeLabel.setText("Delay Time (MIDI Note)", NotificationType::dontSendNotification);
+    _delayTimeLabel.setJustificationType(Justification::centred);
+    _delayTimeLabel.attachToComponent(&_delayTimeSlider, false);
+    addAndMakeVisible(_delayTimeLabel);
     
-    // Interprocess pipe label
-    _interprocessPipeSuffixLabel.setBounds(25, 50, 100, 20);
-    _interprocessPipeSuffixLabel.setText(processor.getInterprocessPipeSuffix(), NotificationType::dontSendNotification);
-    _interprocessPipeSuffixLabel.setColour(Label::ColourIds::outlineColourId, Colours::white);
-    _interprocessPipeSuffixLabel.setEditable(true);
+    // ================================================================
+    // Interprocess pipe text editor
+    _interprocessPipeSuffixTextEditor.setBounds(25, 50, 100, 20);
+    _interprocessPipeSuffixTextEditor.setText(processor.getInterprocessPipeSuffix(), NotificationType::dontSendNotification);
+    _interprocessPipeSuffixTextEditor.setColour(Label::ColourIds::outlineColourId, Colours::white);
+    _interprocessPipeSuffixTextEditor.setJustificationType(Justification::centred);
+    _interprocessPipeSuffixTextEditor.setEditable(true);
     // _interprocessPipeIdLabel.attachToComponent(&_delayTimeSlider, true);
-    addAndMakeVisible(_interprocessPipeSuffixLabel);
+    addAndMakeVisible(_interprocessPipeSuffixTextEditor);
     
-    _interprocessPipeSuffixLabel.onTextChange = [this] {
-        processor.setInterprocessPipeSuffix(_interprocessPipeSuffixLabel.getText());
+    _interprocessPipeSuffixTextEditor.onTextChange = [this] {
+        processor.setInterprocessPipeSuffix(_interprocessPipeSuffixTextEditor.getText());
     };
+    
+    _interprocessPipeSuffixLabel.setText("Plugin Pair ID", NotificationType::dontSendNotification);
+    _interprocessPipeSuffixLabel.setJustificationType(Justification::centred);
+    _interprocessPipeSuffixLabel.attachToComponent(&_interprocessPipeSuffixTextEditor, false);
+    addAndMakeVisible(_interprocessPipeSuffixLabel);
     
     // Timer
     startTimer(20);
