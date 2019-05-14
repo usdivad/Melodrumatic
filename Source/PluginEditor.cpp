@@ -12,7 +12,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcessor& p)
+MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (MelodrumaticAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
     // Make sure that before the constructor has finished, you've set the
@@ -122,12 +122,12 @@ DaalDel2AudioProcessorEditor::DaalDel2AudioProcessorEditor (DaalDel2AudioProcess
     startTimer(20);
 }
 
-DaalDel2AudioProcessorEditor::~DaalDel2AudioProcessorEditor()
+MelodrumaticAudioProcessorEditor::~MelodrumaticAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void DaalDel2AudioProcessorEditor::paint (Graphics& g)
+void MelodrumaticAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
@@ -137,7 +137,7 @@ void DaalDel2AudioProcessorEditor::paint (Graphics& g)
     // g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
 }
 
-void DaalDel2AudioProcessorEditor::resized()
+void MelodrumaticAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
@@ -145,7 +145,7 @@ void DaalDel2AudioProcessorEditor::resized()
 
 
 //==============================================================================
-void DaalDel2AudioProcessorEditor::timerCallback()
+void MelodrumaticAudioProcessorEditor::timerCallback()
 {
     // Update GUI based on params
     auto& params = processor.getParameters();

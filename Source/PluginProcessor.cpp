@@ -12,11 +12,11 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-std::map<String, bool> DaalDel2AudioProcessor::_hasInterprocessPipeBeenCreated;
-std::map<String, int> DaalDel2AudioProcessor::_numProcessesConnectedToInterprocessPipe;
+std::map<String, bool> MelodrumaticAudioProcessor::_hasInterprocessPipeBeenCreated;
+std::map<String, int> MelodrumaticAudioProcessor::_numProcessesConnectedToInterprocessPipe;
 
 //==============================================================================
-DaalDel2AudioProcessor::DaalDel2AudioProcessor()
+MelodrumaticAudioProcessor::MelodrumaticAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -45,7 +45,7 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     
     
     // Interprocess
-    // _interprocessPipeName = "DAALDEL2_INTERPROCESS_PIPE_" + generateProcessName();
+    // _interprocessPipeName = "MELODRUMATIC_INTERPROCESS_PIPE_" + generateProcessName();
     _didCurrentInstanceCreateInterprocessPipe = false;
     _processName = generateProcessName();
     _interprocessPipeSuffix = "DEFAULT";
@@ -59,7 +59,7 @@ DaalDel2AudioProcessor::DaalDel2AudioProcessor()
     addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", _minDelayTime, _maxDelayTime, _maxDelayTime));
 }
 
-DaalDel2AudioProcessor::~DaalDel2AudioProcessor()
+MelodrumaticAudioProcessor::~MelodrumaticAudioProcessor()
 {
     // Free up memory for circular buffers if necessary
     if (_circularBufferLeft != nullptr) {
@@ -87,12 +87,12 @@ DaalDel2AudioProcessor::~DaalDel2AudioProcessor()
 }
 
 //==============================================================================
-const String DaalDel2AudioProcessor::getName() const
+const String MelodrumaticAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool DaalDel2AudioProcessor::acceptsMidi() const
+bool MelodrumaticAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -101,7 +101,7 @@ bool DaalDel2AudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool DaalDel2AudioProcessor::producesMidi() const
+bool MelodrumaticAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -110,7 +110,7 @@ bool DaalDel2AudioProcessor::producesMidi() const
    #endif
 }
 
-bool DaalDel2AudioProcessor::isMidiEffect() const
+bool MelodrumaticAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -119,37 +119,37 @@ bool DaalDel2AudioProcessor::isMidiEffect() const
    #endif
 }
 
-double DaalDel2AudioProcessor::getTailLengthSeconds() const
+double MelodrumaticAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int DaalDel2AudioProcessor::getNumPrograms()
+int MelodrumaticAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int DaalDel2AudioProcessor::getCurrentProgram()
+int MelodrumaticAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void DaalDel2AudioProcessor::setCurrentProgram (int index)
+void MelodrumaticAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const String DaalDel2AudioProcessor::getProgramName (int index)
+const String MelodrumaticAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void DaalDel2AudioProcessor::changeProgramName (int index, const String& newName)
+void MelodrumaticAudioProcessor::changeProgramName (int index, const String& newName)
 {
 }
 
 //==============================================================================
-void DaalDel2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void MelodrumaticAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
@@ -185,14 +185,14 @@ void DaalDel2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     _circularBufferWriteHead = 0;
 }
 
-void DaalDel2AudioProcessor::releaseResources()
+void MelodrumaticAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool DaalDel2AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool MelodrumaticAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
@@ -215,7 +215,7 @@ bool DaalDel2AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 }
 #endif
 
-void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     // ================================================================
     // Interprocess
@@ -383,42 +383,42 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 }
 
 //==============================================================================
-bool DaalDel2AudioProcessor::hasEditor() const
+bool MelodrumaticAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* DaalDel2AudioProcessor::createEditor()
+AudioProcessorEditor* MelodrumaticAudioProcessor::createEditor()
 {
-    return new DaalDel2AudioProcessorEditor (*this);
+    return new MelodrumaticAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void DaalDel2AudioProcessor::getStateInformation (MemoryBlock& destData)
+void MelodrumaticAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 }
 
-void DaalDel2AudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void MelodrumaticAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 }
 
 //==============================================================================
-void DaalDel2AudioProcessor::connectionMade()
+void MelodrumaticAudioProcessor::connectionMade()
 {
     DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Connection made");
 }
 
-void DaalDel2AudioProcessor::connectionLost()
+void MelodrumaticAudioProcessor::connectionLost()
 {
     DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Connection lost");
 }
 
-void DaalDel2AudioProcessor::messageReceived(const MemoryBlock &message)
+void MelodrumaticAudioProcessor::messageReceived(const MemoryBlock &message)
 {
     DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Message received: " << message.toString());
     
@@ -441,13 +441,13 @@ void DaalDel2AudioProcessor::messageReceived(const MemoryBlock &message)
 
 
 // Linear interpolation
-float DaalDel2AudioProcessor::lerp(float x0, float x1, float t)
+float MelodrumaticAudioProcessor::lerp(float x0, float x1, float t)
 {
     return (1 - t) * x0 + t * x1;
 }
 
 // Create pipe, or connect to existing pipe
-bool DaalDel2AudioProcessor::createOrConnectToInterprocessPipe()
+bool MelodrumaticAudioProcessor::createOrConnectToInterprocessPipe()
 {
     // Create pipe
     // _didCurrentInstanceCreateInterprocessPipe = false;
@@ -483,7 +483,7 @@ bool DaalDel2AudioProcessor::createOrConnectToInterprocessPipe()
 }
 
 // Generate a random process name
-String DaalDel2AudioProcessor::generateProcessName()
+String MelodrumaticAudioProcessor::generateProcessName()
 {
     Random rng;
     String name;
@@ -497,25 +497,25 @@ String DaalDel2AudioProcessor::generateProcessName()
 }
 
 // Convert MIDI note to frequency in Hz
-float DaalDel2AudioProcessor::midiNoteToHz(float midiNote)
+float MelodrumaticAudioProcessor::midiNoteToHz(float midiNote)
 {
     return (440/32) * (pow(2, (midiNote-9)/12));
     // return 13.75 * (pow(2, (midiNote-9) * 0.08333333333)); // Not accurate enough :(
 }
 
-void DaalDel2AudioProcessor::initializeInterprocessStaticVariables()
+void MelodrumaticAudioProcessor::initializeInterprocessStaticVariables()
 {
     _hasInterprocessPipeBeenCreated.insert({getInterprocessPipeFullName(), false});
     _numProcessesConnectedToInterprocessPipe.insert({getInterprocessPipeFullName(), 0});
 }
 
 
-String DaalDel2AudioProcessor::getInterprocessPipeFullName()
+String MelodrumaticAudioProcessor::getInterprocessPipeFullName()
 {
     return _interprocessPipeBaseName + String("_") + _interprocessPipeSuffix;
 }
 
-void DaalDel2AudioProcessor::setInterprocessPipeSuffix(String suffix)
+void MelodrumaticAudioProcessor::setInterprocessPipeSuffix(String suffix)
 {
     // Update variables for current pipe
     _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]--; // Decrement current count
@@ -526,7 +526,7 @@ void DaalDel2AudioProcessor::setInterprocessPipeSuffix(String suffix)
     initializeInterprocessStaticVariables(); // Add to map
 }
 
-String DaalDel2AudioProcessor::getInterprocessPipeSuffix()
+String MelodrumaticAudioProcessor::getInterprocessPipeSuffix()
 {
     return _interprocessPipeSuffix;
 }
@@ -536,5 +536,5 @@ String DaalDel2AudioProcessor::getInterprocessPipeSuffix()
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new DaalDel2AudioProcessor();
+    return new MelodrumaticAudioProcessor();
 }

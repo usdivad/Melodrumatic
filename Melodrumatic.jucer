@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="esd5qn" name="DaalDel2" projectType="audioplug" jucerVersion="5.4.3"
-              companyName="usdivad" pluginCharacteristicsValue="pluginWantsMidiIn">
-  <MAINGROUP id="HOfhMn" name="DaalDel2">
+<JUCERPROJECT id="esd5qn" name="Melodrumatic" projectType="audioplug" jucerVersion="5.4.3"
+              companyName="David Su" pluginCharacteristicsValue="pluginWantsMidiIn"
+              bundleIdentifier="com.usdivad.Melodrumatic" companyWebsite="http://usdivad.com/"
+              companyEmail="hello@usdivad.com" aaxIdentifier="com.usdivad.Melodrumatic">
+  <MAINGROUP id="HOfhMn" name="Melodrumatic">
     <GROUP id="{D108E745-BE2A-4105-7EB0-674D8CF6FA87}" name="Source">
       <FILE id="nDjfLZ" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

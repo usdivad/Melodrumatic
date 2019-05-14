@@ -16,12 +16,12 @@
 //==============================================================================
 /**
 */
-class DaalDel2AudioProcessorEditor  : public AudioProcessorEditor,
+class MelodrumaticAudioProcessorEditor  : public AudioProcessorEditor,
                                       public Timer
 {
 public:
-    DaalDel2AudioProcessorEditor (DaalDel2AudioProcessor&);
-    ~DaalDel2AudioProcessorEditor();
+    MelodrumaticAudioProcessorEditor (MelodrumaticAudioProcessor&);
+    ~MelodrumaticAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
@@ -33,7 +33,7 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    DaalDel2AudioProcessor& processor;
+    MelodrumaticAudioProcessor& processor;
     
     //==============================================================================
     // Sliders
@@ -50,5 +50,5 @@ private:
     
     Label _interprocessPipeSuffixLabel;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DaalDel2AudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MelodrumaticAudioProcessorEditor)
 };

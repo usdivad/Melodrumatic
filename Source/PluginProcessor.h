@@ -15,7 +15,7 @@
 //==============================================================================
 /**
 */
-class DaalDel2AudioProcessor  : public AudioProcessor,
+class MelodrumaticAudioProcessor  : public AudioProcessor,
                                 public InterprocessConnection
 {
 public:
@@ -25,8 +25,8 @@ public:
     static std::map<String, int> _numProcessesConnectedToInterprocessPipe;
     
     //==============================================================================
-    DaalDel2AudioProcessor();
-    ~DaalDel2AudioProcessor();
+    MelodrumaticAudioProcessor();
+    ~MelodrumaticAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -112,7 +112,7 @@ private:
     // Interprocess
     const int _interprocessCreatePipeTimeoutMs = -1;
     const int _interprocessConnectToPipeTimeoutMs = -1; // TODO: Figure out whether it's better to leave this as -1 (infinite timeout) or to set it to disconnect/reconnect at e.g. 50-100ms
-    const String _interprocessPipeBaseName = "DAALDEL2_INTERPROCESS_PIPE";
+    const String _interprocessPipeBaseName = "MELODRUMATIC_INTERPROCESS_PIPE";
     String _processName;
     String _interprocessPipeSuffix;
     bool _didCurrentInstanceCreateInterprocessPipe;
@@ -127,5 +127,5 @@ private:
     AudioParameterFloat* _delayTimeParam;
     
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DaalDel2AudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MelodrumaticAudioProcessor)
 };
