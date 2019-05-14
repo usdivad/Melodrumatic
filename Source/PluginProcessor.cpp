@@ -399,12 +399,36 @@ void MelodrumaticAudioProcessor::getStateInformation (MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    
+    // Create XML
+    std::unique_ptr<XmlElement> xml(new XmlElement("Melodrumatic"));
+    
+    // Populate with params
+    xml->setAttribute("dryWet", _dryWetParam->get());
+    xml->setAttribute("feedback", _feedbackParam->get());
+    xml->setAttribute("delayTime", _delayTimeParam->get());
+    xml->setAttribute("interprocessPipeSuffix", _interprocessPipeSuffix);
+    
+    // Copy the XML data to destination blob
+    copyXmlToBinary(*xml, destData);
 }
 
 void MelodrumaticAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    
+    // Create XML from state data
+    std::unique_ptr<XmlElement> xml(getXmlFromBinary(data, sizeInBytes));
+    
+    // Set params based on state
+    if (xml.get() != nullptr && xml->hasTagName("Melodrumatic")) {
+        *_dryWetParam = xml->getDoubleAttribute("dryWet");
+        *_feedbackParam = xml->getDoubleAttribute("feedback");
+        *_delayTimeParam = xml->getDoubleAttribute("delayTime");
+        
+        setInterprocessPipeSuffix(xml->getStringAttribute("interprocessPipeSuffix"));
+    }
 }
 
 //==============================================================================
