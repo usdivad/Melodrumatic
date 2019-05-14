@@ -259,6 +259,9 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
                     MemoryBlock midiMessageToSend = MemoryBlock();
                     midiMessageToSend.insert(&midiNote, sizeof(BigInteger), 0);
                     
+                    // Update our own "delayTimeParam" just to keep UI consistent
+                    *_delayTimeParam = midiNote.toInteger();
+                    
                     // Send message if connection was successful
                     if (isInterprocessConnectToPipeSuccessful) {
                         DBG(_processName << " (" << _trackProperties.name << "): " << "Sending MIDI message " << midiNote.toString(10));
