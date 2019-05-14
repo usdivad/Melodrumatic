@@ -222,7 +222,7 @@ void DaalDel2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     
     // Connect (in case we lost the connection)
     bool isInterprocessConnectToPipeSuccessful = isConnected() && _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()] > 1;
-    // DBG("_numProcessesConnectedToInterprocessPipe=" << _numProcessesConnectedToInterprocessPipe);
+    DBG("_numProcessesConnectedToInterprocessPipe[" << getInterprocessPipeFullName() << "]=" << _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]);
     
     if (!isInterprocessConnectToPipeSuccessful) {
         bool isInterprocessConnectToPipeSuccessful = createOrConnectToInterprocessPipe();
@@ -517,8 +517,13 @@ String DaalDel2AudioProcessor::getInterprocessPipeFullName()
 
 void DaalDel2AudioProcessor::setInterprocessPipeSuffix(String suffix)
 {
-    _interprocessPipeSuffix = suffix;
-    initializeInterprocessStaticVariables();
+    // Update variables for current pipe
+    _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]--; // Decrement current count
+    _didCurrentInstanceCreateInterprocessPipe = false; // Reset
+    
+    // Set new suffix and variables
+    _interprocessPipeSuffix = suffix; // Set new suffix
+    initializeInterprocessStaticVariables(); // Add to map
 }
 
 String DaalDel2AudioProcessor::getInterprocessPipeSuffix()
