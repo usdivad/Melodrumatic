@@ -341,10 +341,10 @@
  #define JucePlugin_ManufacturerEmail      "hello@usdivad.com"
 #endif
 #ifndef  JucePlugin_ManufacturerCode
- #define JucePlugin_ManufacturerCode       0x4d616e75 // 'Manu'
+ #define JucePlugin_ManufacturerCode       0x44445355 // 'DDSU'
 #endif
 #ifndef  JucePlugin_PluginCode
- #define JucePlugin_PluginCode             0x45736435 // 'Esd5'
+ #define JucePlugin_PluginCode             0x46314231 // 'F1B1'
 #endif
 #ifndef  JucePlugin_IsSynth
  #define JucePlugin_IsSynth                0
