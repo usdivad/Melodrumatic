@@ -90,8 +90,8 @@ private:
     
     //==============================================================================
     // Circular buffer
-    float* _circularBufferLeft;
-    float* _circularBufferRight;
+    std::unique_ptr<float[]> _circularBufferLeft;
+    std::unique_ptr<float[]> _circularBufferRight;
     int _circularBufferWriteHead;
     int _circularBufferLength;
     

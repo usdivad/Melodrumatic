@@ -61,16 +61,6 @@ MelodrumaticAudioProcessor::MelodrumaticAudioProcessor()
 
 MelodrumaticAudioProcessor::~MelodrumaticAudioProcessor()
 {
-    // Free up memory for circular buffers if necessary
-    if (_circularBufferLeft != nullptr) {
-        delete [] _circularBufferLeft;
-        _circularBufferLeft = nullptr;
-    }
-    if (_circularBufferRight != nullptr) {
-        delete [] _circularBufferRight;
-        _circularBufferRight = nullptr;
-    }
-    
     // Interprocess
     
     // Decrement
@@ -162,24 +152,9 @@ void MelodrumaticAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
     _circularBufferLength = (int)(sampleRate * _maxDelayTime);
     
     // Initialize circular buffers based on sample rate and delay time
-    // The nullptr setting allows for changing sample rates in the middle of a session
-    if (_circularBufferLeft != nullptr) { // Left
-        delete [] _circularBufferLeft;
-        _circularBufferLeft = nullptr;
-    }
-    if (_circularBufferLeft == nullptr) {
-        _circularBufferLeft = new float[_circularBufferLength];
-    }
-    zeromem(_circularBufferLeft, _circularBufferLength * sizeof(float));
-    
-    if (_circularBufferRight != nullptr) { // Right
-        delete [] _circularBufferRight;
-        _circularBufferRight = nullptr;
-    }
-    if (_circularBufferRight == nullptr) {
-        _circularBufferRight = new float[_circularBufferLength];
-    }
-    zeromem(_circularBufferLeft, _circularBufferLength * sizeof(float));
+    // (This allows for changing sample rates in the middle of a session)
+    _circularBufferLeft.reset(new float[_circularBufferLength]);
+    _circularBufferRight.reset(new float[_circularBufferLength]);
     
     // Initialize write head
     _circularBufferWriteHead = 0;
