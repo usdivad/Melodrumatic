@@ -77,7 +77,7 @@ public:
     // double fastPow(double a, double b); // Not accurate enough
     void initializeInterprocessStaticVariables();
     String getInterprocessPipeFullName();
-    void setInterprocessPipeSuffix(String suffix);
+    void setInterprocessPipeSuffix(String suffix, bool fromSetStateInformation);
     String getInterprocessPipeSuffix();
     
 private:

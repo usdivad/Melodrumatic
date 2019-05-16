@@ -402,7 +402,7 @@ void MelodrumaticAudioProcessor::setStateInformation (const void* data, int size
         *_feedbackParam = xml->getDoubleAttribute("feedback");
         *_delayTimeParam = xml->getDoubleAttribute("delayTime");
         
-        setInterprocessPipeSuffix(xml->getStringAttribute("interprocessPipeSuffix"));
+        setInterprocessPipeSuffix(xml->getStringAttribute("interprocessPipeSuffix"), true);
     }
 }
 
@@ -514,11 +514,14 @@ String MelodrumaticAudioProcessor::getInterprocessPipeFullName()
     return _interprocessPipeBaseName + String("_") + _interprocessPipeSuffix;
 }
 
-void MelodrumaticAudioProcessor::setInterprocessPipeSuffix(String suffix)
+void MelodrumaticAudioProcessor::setInterprocessPipeSuffix(String suffix, bool fromSetStateInformation)
 {
     // Update variables for current pipe
-    _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]--; // Decrement current count
-    _didCurrentInstanceCreateInterprocessPipe = false; // Reset
+    if (!fromSetStateInformation)
+    {
+        _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]--; // Decrement current count
+        _didCurrentInstanceCreateInterprocessPipe = false; // Reset
+    }
     
     // Set new suffix and variables
     _interprocessPipeSuffix = suffix; // Set new suffix

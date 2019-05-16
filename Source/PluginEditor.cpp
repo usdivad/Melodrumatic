@@ -110,7 +110,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     addAndMakeVisible(_interprocessPipeSuffixTextEditor);
     
     _interprocessPipeSuffixTextEditor.onTextChange = [this] {
-        processor.setInterprocessPipeSuffix(_interprocessPipeSuffixTextEditor.getText());
+        processor.setInterprocessPipeSuffix(_interprocessPipeSuffixTextEditor.getText(), false);
     };
     
     _interprocessPipeSuffixLabel.setText("Plugin Pair ID", NotificationType::dontSendNotification);
