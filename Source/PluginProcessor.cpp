@@ -450,7 +450,7 @@ bool MelodrumaticAudioProcessor::createOrConnectToInterprocessPipe()
 {
     // Create pipe
     // _didCurrentInstanceCreateInterprocessPipe = false;
-    DBG("_hasInterprocessPipeBeenCreated=" << (_hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()] ? "true" : "false"));
+    DBG("_hasInterprocessPipeBeenCreated[" << getInterprocessPipeFullName() << "]=" << (_hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()] ? "true" : "false"));
     if (!_hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()])
     {
         _hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()] = createPipe(getInterprocessPipeFullName(), _interprocessCreatePipeTimeoutMs, false);
@@ -473,7 +473,7 @@ bool MelodrumaticAudioProcessor::createOrConnectToInterprocessPipe()
         }
     }
     else {
-        DBG(_processName << " (" << _trackProperties.name << "): " << "Succesfully created pipe " << getInterprocessPipeFullName());
+        DBG(_processName << " (" << _trackProperties.name << "): " << "Successfully created pipe " << getInterprocessPipeFullName());
         _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()] = 1; // Reset since we're recreating the pipe
         return true;
     }
@@ -519,8 +519,17 @@ void MelodrumaticAudioProcessor::setInterprocessPipeSuffix(String suffix, bool f
     // Update variables for current pipe
     if (!fromSetStateInformation)
     {
-        _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]--; // Decrement current count
-        _didCurrentInstanceCreateInterprocessPipe = false; // Reset
+        // Decrement current count
+        _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]--;
+        
+        // Reset creation flag for pipe if necessary
+        if (_didCurrentInstanceCreateInterprocessPipe)
+        {
+            _hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()] = false;
+        }
+        
+        // Reset creation flag for current instance
+        _didCurrentInstanceCreateInterprocessPipe = false;
     }
     
     // Set new suffix and variables
