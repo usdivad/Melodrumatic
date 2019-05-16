@@ -47,8 +47,13 @@ private:
     
     // Text
     Label _interprocessPipeSuffixTextEditor; // Yes, it's technically a label, but it's editable
-    
+
     Label _interprocessPipeSuffixLabel;
+    
+    // Keys!
+    MidiKeyboardState _midiKeyboardState;
+    MidiKeyboardComponent _midiKeyboardComponent;
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MelodrumaticAudioProcessorEditor)
 };

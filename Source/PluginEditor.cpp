@@ -13,11 +13,13 @@
 
 //==============================================================================
 MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (MelodrumaticAudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
+    : AudioProcessorEditor (&p), processor (p),
+      _midiKeyboardState(),
+      _midiKeyboardComponent(_midiKeyboardState, MidiKeyboardComponent::Orientation::horizontalKeyboard)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    setSize (640, 320);
     
     // ================================================================
     // Get params from processor
@@ -76,7 +78,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // Delay time
-    _delayTimeSlider.setBounds(200, 50, 150, 150);
+    _delayTimeSlider.setBounds(200, 150, 150, 150);
     _delayTimeSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _delayTimeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
     _delayTimeSlider.setRange(delayTimeParam->range.start, delayTimeParam->range.end);
@@ -101,7 +103,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // Interprocess pipe text editor
-    _interprocessPipeSuffixTextEditor.setBounds(25, 50, 100, 20);
+    _interprocessPipeSuffixTextEditor.setBounds(400, 175, 100, 20);
     _interprocessPipeSuffixTextEditor.setText(processor.getInterprocessPipeSuffix(), NotificationType::dontSendNotification);
     _interprocessPipeSuffixTextEditor.setColour(Label::ColourIds::outlineColourId, Colours::white);
     _interprocessPipeSuffixTextEditor.setJustificationType(Justification::centred);
@@ -118,6 +120,12 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     _interprocessPipeSuffixLabel.attachToComponent(&_interprocessPipeSuffixTextEditor, false);
     addAndMakeVisible(_interprocessPipeSuffixLabel);
     
+    // ================================================================
+    // MIDI keyboard
+    _midiKeyboardComponent.setBounds(20, 20, 600, 100);
+    addAndMakeVisible(_midiKeyboardComponent);
+    
+    // ================================================================
     // Timer
     startTimer(20);
 }
@@ -151,5 +159,12 @@ void MelodrumaticAudioProcessorEditor::timerCallback()
     auto& params = processor.getParameters();
     AudioParameterFloat* delayTimeParam = (AudioParameterFloat*)params.getUnchecked(2);
     _delayTimeSlider.setValue(delayTimeParam->get());
+    
+    int midiNote = jmax((int) delayTimeParam->get() - 1, 1); // Subtract one to get back to original note
     // DBG("_delayTimeSlider value = " << _delayTimeSlider.getValue());
+    if (!_midiKeyboardState.isNoteOn(1, midiNote))
+    {
+        _midiKeyboardState.allNotesOff(1);
+        _midiKeyboardState.noteOn(1, midiNote, 1.0);
+    }
 }
