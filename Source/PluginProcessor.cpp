@@ -235,7 +235,7 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
                     midiMessageToSend.insert(&midiNote, sizeof(BigInteger), 0);
                     
                     // Update our own "delayTimeParam" just to keep UI consistent
-                    *_delayTimeParam = midiNote.toInteger();
+                    *_delayTimeParam = jmax(midiNote.toInteger() + 1, 1);
                     
                     // Send message if connection was successful
                     if (isInterprocessConnectToPipeSuccessful) {
