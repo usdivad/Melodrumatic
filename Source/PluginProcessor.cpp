@@ -50,7 +50,7 @@ MelodrumaticAudioProcessor::MelodrumaticAudioProcessor()
     _processName = generateProcessName();
     _interprocessPipeSuffix = "DEFAULT";
     initializeInterprocessStaticVariables();
-    createOrConnectToInterprocessPipe(); // Create pipe, or connect to existing pipe
+    // createOrConnectToInterprocessPipe(); // Create pipe, or connect to existing pipe
     
     // Parameters
     addParameter(_dryWetParam = new AudioParameterFloat("dryWet", "Dry/Wet", 0, 1, 0.5));
@@ -196,21 +196,20 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     // Interprocess
     
     // Connect (in case we lost the connection)
-    bool isInterprocessConnectToPipeSuccessful = isConnected() && _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()] > 1;
-    DBG("_numProcessesConnectedToInterprocessPipe[" << getInterprocessPipeFullName() << "]=" << _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]);
-    
-    if (!isInterprocessConnectToPipeSuccessful) {
-        bool isInterprocessConnectToPipeSuccessful = createOrConnectToInterprocessPipe();
-        // isInterprocessConnectToPipeSuccessful = connectToPipe(_interprocessPipeName, _interprocessConnectToPipeTimeoutMs);
-        
-        // Print connection status
-        if (isInterprocessConnectToPipeSuccessful) {
-            DBG(_processName << " (" << _trackProperties.name << "): " << "Reconnection to pipe succeeded");
-        }
-        else {
-            DBG(_processName << " (" << _trackProperties.name << "): " << "Reconnection to pipe failed");
-        }
-    }
+    // bool isInterprocessConnectToPipeSuccessful = isConnected() && _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()] > 1;
+    // DBG("_numProcessesConnectedToInterprocessPipe[" << getInterprocessPipeFullName() << "]=" << _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]);
+    //
+    // if (!isInterprocessConnectToPipeSuccessful) {
+    //     bool isInterprocessConnectToPipeSuccessful = createOrConnectToInterprocessPipe();
+    //
+    //     // Print connection status
+    //     if (isInterprocessConnectToPipeSuccessful) {
+    //         DBG(_processName << " (" << _trackProperties.name << "): " << "Reconnection to pipe succeeded");
+    //     }
+    //     else {
+    //         DBG(_processName << " (" << _trackProperties.name << "): " << "Reconnection to pipe failed");
+    //     }
+    // }
     
     
     // ================================================================
@@ -238,17 +237,20 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
                     *_delayTimeParam = jmax(midiNote.toInteger() + 1, 1);
                     
                     // Send message if connection was successful
-                    if (isInterprocessConnectToPipeSuccessful) {
-                        DBG(_processName << " (" << _trackProperties.name << "): " << "Sending MIDI message " << midiNote.toString(10));
-                        bool didSendMessageSucceed = sendMessage(midiMessageToSend);
-                        if (didSendMessageSucceed) {
-                            DBG(_processName << " (" << _trackProperties.name << "): " << "Send message succeeded");
-                        }
-                        else {
-                            DBG(_processName << " (" << _trackProperties.name << "): " << "Send message failed");
-                            
-                        }
-                    }
+                    // if (isInterprocessConnectToPipeSuccessful) {
+                    //     DBG(_processName << " (" << _trackProperties.name << "): " << "Sending MIDI message " << midiNote.toString(10));
+                    //     bool didSendMessageSucceed = sendMessage(midiMessageToSend);
+                    //     if (didSendMessageSucceed) {
+                    //         DBG(_processName << " (" << _trackProperties.name << "): " << "Send message succeeded");
+                    //     }
+                    //     else {
+                    //         DBG(_processName << " (" << _trackProperties.name << "): " << "Send message failed");
+                    //
+                    //     }
+                    // }
+                    // else {
+                    //     DBG(_processName << " (" << _trackProperties.name << "): " << "Not sending message because not connnected to pipe");
+                    // }
                 }
                 
             }
