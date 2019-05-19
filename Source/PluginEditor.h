@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include "MelodrumaticLookAndFeel.h"
 
 //==============================================================================
 /**
@@ -36,6 +37,10 @@ private:
     MelodrumaticAudioProcessor& processor;
     
     //==============================================================================
+    
+    // Overall look and feel
+    MelodrumaticLookAndFeel _lookAndFeel;
+    
     // Sliders
     Slider _dryWetSlider;
     Slider _feedbackSlider;

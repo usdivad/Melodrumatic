@@ -79,6 +79,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // ================================================================
     // Delay time
     _delayTimeSlider.setBounds(200, 150, 150, 150);
+    _delayTimeSlider.setLookAndFeel(&_lookAndFeel);
     _delayTimeSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _delayTimeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
     _delayTimeSlider.setRange(delayTimeParam->range.start, delayTimeParam->range.end);
@@ -123,6 +124,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // ================================================================
     // MIDI keyboard
     _midiKeyboardComponent.setBounds(20, 20, 600, 100);
+    _midiKeyboardComponent.setLookAndFeel(&_lookAndFeel);
     addAndMakeVisible(_midiKeyboardComponent);
     
     // ================================================================
