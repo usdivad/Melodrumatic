@@ -19,7 +19,9 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (640, 320);
+    int editorWidth = 800;
+    int editorHeight = 320;
+    setSize (editorWidth, editorHeight);
     
     // ================================================================
     // Get params from processor
@@ -125,7 +127,13 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // MIDI keyboard
-    _midiKeyboardComponent.setBounds(20, 20, 600, 100);
+    float midiKeyboardComponentX = 20;
+    float midiKeyboardComponentWidth = editorWidth - (midiKeyboardComponentX * 2);
+    _midiKeyboardComponent.setBounds(midiKeyboardComponentX, 20, midiKeyboardComponentWidth, 100);
+    _midiKeyboardComponent.setAvailableRange(0, 127);
+    _midiKeyboardComponent.setLowestVisibleKey(0);
+    _midiKeyboardComponent.setKeyWidth(midiKeyboardComponentWidth / (128.0 - (5 * (128.0/12)))); // White keys only
+    _midiKeyboardComponent.setOctaveForMiddleC(2);
     _midiKeyboardComponent.setLookAndFeel(&_lookAndFeel);
     addAndMakeVisible(_midiKeyboardComponent);
     
