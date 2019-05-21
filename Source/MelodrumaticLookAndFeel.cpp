@@ -16,8 +16,12 @@ MelodrumaticLookAndFeel::MelodrumaticLookAndFeel()
     setColour(Slider::thumbColourId, Colour(0xff8e44ad));
     
     // MIDI keyboard
-    setColour(MidiKeyboardComponent::ColourIds::keyDownOverlayColourId, Colour(0xff8e44ad));
-    setColour(MidiKeyboardComponent::ColourIds::mouseOverKeyOverlayColourId, Colour(0xffd2b4de));
+    setColour(MidiKeyboardComponent::ColourIds::blackNoteColourId, Colour(0xff7d3c98));
+    setColour(MidiKeyboardComponent::ColourIds::whiteNoteColourId, Colour(0xff6c3483));
+    setColour(MidiKeyboardComponent::ColourIds::keySeparatorLineColourId, Colour(0x44ffffff));
+    setColour(MidiKeyboardComponent::ColourIds::keyDownOverlayColourId, Colour(0xffffffff));
+    setColour(MidiKeyboardComponent::ColourIds::mouseOverKeyOverlayColourId, Colour(0x44ffffff));
+    setColour(MidiKeyboardComponent::ColourIds::textLabelColourId, Colour(0xfff1c40f));
 }
 
 MelodrumaticLookAndFeel::~MelodrumaticLookAndFeel()

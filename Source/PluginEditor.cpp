@@ -133,7 +133,8 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     _midiKeyboardComponent.setAvailableRange(0, 127);
     _midiKeyboardComponent.setLowestVisibleKey(0);
     _midiKeyboardComponent.setKeyWidth(midiKeyboardComponentWidth / (128.0 - (5 * (128.0/12)))); // White keys only
-    _midiKeyboardComponent.setOctaveForMiddleC(2);
+    // _midiKeyboardComponent.setOctaveForMiddleC(2);
+    // _midiKeyboardComponent.setBlackNoteWidthProportion(0.8);
     _midiKeyboardComponent.setLookAndFeel(&_lookAndFeel);
     addAndMakeVisible(_midiKeyboardComponent);
     
