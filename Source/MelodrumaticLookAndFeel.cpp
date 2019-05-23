@@ -81,5 +81,7 @@ const Font& MelodrumaticLookAndFeel::getGSRegularFont()
 {
     static Font gsRegular(Font(Typeface::createSystemTypefaceFor(BinaryData::gs_regular_ttf, BinaryData::gs_regular_ttfSize)));
     
+    gsRegular.setHeight(18);
+    
     return gsRegular;
 }

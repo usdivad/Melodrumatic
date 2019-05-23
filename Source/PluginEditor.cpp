@@ -52,6 +52,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     _dryWetLabel.setText("Dry/Wet", NotificationType::dontSendNotification);
     _dryWetLabel.setJustificationType(Justification::centred);
+    _dryWetLabel.setFont(_lookAndFeel.getGSRegularFont());
     _dryWetLabel.attachToComponent(&_dryWetSlider, false);
     addAndMakeVisible(_dryWetLabel);
     
@@ -77,6 +78,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     _feedbackLabel.setText("Feedback", NotificationType::dontSendNotification);
     _feedbackLabel.setJustificationType(Justification::centred);
+    _feedbackLabel.setFont(_lookAndFeel.getGSRegularFont());
     _feedbackLabel.attachToComponent(&_feedbackSlider, false);
     addAndMakeVisible(_feedbackLabel);
     
@@ -103,6 +105,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     _delayTimeLabel.setText("Delay Time (MIDI Note)", NotificationType::dontSendNotification);
     _delayTimeLabel.setJustificationType(Justification::centred);
+    _delayTimeLabel.setFont(_lookAndFeel.getGSRegularFont());
     _delayTimeLabel.attachToComponent(&_delayTimeSlider, false);
     addAndMakeVisible(_delayTimeLabel);
     
@@ -112,6 +115,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     _interprocessPipeSuffixTextEditor.setText(processor.getInterprocessPipeSuffix(), NotificationType::dontSendNotification);
     _interprocessPipeSuffixTextEditor.setColour(Label::ColourIds::outlineColourId, Colours::white);
     _interprocessPipeSuffixTextEditor.setJustificationType(Justification::centred);
+    _interprocessPipeSuffixTextEditor.setFont(_lookAndFeel.getGSRegularFont());
     _interprocessPipeSuffixTextEditor.setEditable(true);
     // _interprocessPipeIdLabel.attachToComponent(&_delayTimeSlider, true);
     addAndMakeVisible(_interprocessPipeSuffixTextEditor);
@@ -122,6 +126,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     _interprocessPipeSuffixLabel.setText("Plugin Pair ID", NotificationType::dontSendNotification);
     _interprocessPipeSuffixLabel.setJustificationType(Justification::centred);
+    _interprocessPipeSuffixLabel.setFont(_lookAndFeel.getGSRegularFont());
     _interprocessPipeSuffixLabel.attachToComponent(&_interprocessPipeSuffixTextEditor, false);
     addAndMakeVisible(_interprocessPipeSuffixLabel);
     
