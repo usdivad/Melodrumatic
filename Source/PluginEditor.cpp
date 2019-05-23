@@ -84,7 +84,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // Delay time
-    _delayTimeSlider.setBounds(200, 150, 150, 150);
+    _delayTimeSlider.setBounds(200, 150, 150, 120);
     _delayTimeSlider.setLookAndFeel(&_lookAndFeel);
     _delayTimeSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _delayTimeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
