@@ -15,6 +15,7 @@ MelodrumaticLookAndFeel::MelodrumaticLookAndFeel()
     // Slider
     setColour(Slider::thumbColourId, Colour(0xff8e44ad));
     
+    
     // MIDI keyboard
     setColour(MidiKeyboardComponent::ColourIds::blackNoteColourId, Colour(0xff7d3c98));
     setColour(MidiKeyboardComponent::ColourIds::whiteNoteColourId, Colour(0xff6c3483));
@@ -65,3 +66,20 @@ void MelodrumaticLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int w
     g.fillPath(p);
 }
 
+// ================================================================
+
+const Font& MelodrumaticLookAndFeel::getPCDFont()
+{
+    static Font pcd(Font(Typeface::createSystemTypefaceFor(BinaryData::pcd_ttf, BinaryData::pcd_ttfSize)));
+    
+    pcd.setHeight(48);
+    
+    return pcd;
+}
+
+const Font& MelodrumaticLookAndFeel::getGSRegularFont()
+{
+    static Font gsRegular(Font(Typeface::createSystemTypefaceFor(BinaryData::gs_regular_ttf, BinaryData::gs_regular_ttfSize)));
+    
+    return gsRegular;
+}

@@ -32,7 +32,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // Dry/Wet
-    _dryWetSlider.setBounds(0, 175, 100, 100);
+    _dryWetSlider.setBounds(0, 150, 100, 100);
     _dryWetSlider.setLookAndFeel(&_lookAndFeel);
     _dryWetSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _dryWetSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
@@ -57,7 +57,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // Feedback
-    _feedbackSlider.setBounds(100, 175, 100, 100);
+    _feedbackSlider.setBounds(100, 150, 100, 100);
     _feedbackSlider.setLookAndFeel(&_lookAndFeel);
     _feedbackSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _feedbackSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
@@ -137,6 +137,16 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // _midiKeyboardComponent.setBlackNoteWidthProportion(0.8);
     _midiKeyboardComponent.setLookAndFeel(&_lookAndFeel);
     addAndMakeVisible(_midiKeyboardComponent);
+    
+    // ================================================================
+    // Title
+    // TODO: Eventually make this an image with bloom & plume
+    _titleLabel.setBounds(30, editorHeight - 60, 150, 50);
+    _titleLabel.setText("Melodrumatic", NotificationType::dontSendNotification);
+    _titleLabel.setJustificationType(Justification::centred);
+    _titleLabel.setFont(_lookAndFeel.getPCDFont());
+    addAndMakeVisible(_titleLabel);
+    
     
     // ================================================================
     // Timer

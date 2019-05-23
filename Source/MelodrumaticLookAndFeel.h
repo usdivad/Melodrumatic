@@ -15,10 +15,21 @@
 class MelodrumaticLookAndFeel : public LookAndFeel_V4
 {
 public:
+    // ================================================================
+    // Static
+    
+    static const Font& getPCDFont();
+    static const Font& getGSRegularFont();
+    
+    // ================================================================
     MelodrumaticLookAndFeel();
     ~MelodrumaticLookAndFeel();
+    
+    // ================================================================
+    // Virtual
     
     void drawRotarySlider (Graphics& g, int x, int y, int width, int height,
                            float sliderPosProportional, float rotaryStartAngle,
                            float rotaryEndAngle, Slider& slider) override;
+    
 };
