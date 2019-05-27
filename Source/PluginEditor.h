@@ -45,10 +45,12 @@ private:
     Slider _dryWetSlider;
     Slider _feedbackSlider;
     Slider _delayTimeSlider;
+    Slider _delayTimeSmoothAmountSlider;
     
     Label _dryWetLabel;
     Label _feedbackLabel;
     Label _delayTimeLabel;
+    Label _delayTimeSmoothAmountLabel;
     
     // Text
     Label _titleLabel;

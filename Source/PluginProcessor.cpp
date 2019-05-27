@@ -39,6 +39,7 @@ MelodrumaticAudioProcessor::MelodrumaticAudioProcessor()
     _delayTimeInSamples = 0;
     _delayReadHead = 0;
     _delayTimeSmoothed = 0;
+    // _delayTimeSmoothAmount = 0;
     
     _feedbackLeft = 0;
     _feedbackRight = 0;
@@ -57,6 +58,7 @@ MelodrumaticAudioProcessor::MelodrumaticAudioProcessor()
     addParameter(_feedbackParam = new AudioParameterFloat("feedback", "Feedback", 0, 0.98, 0.5));
     // addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", 0.01, _maxDelayTime, 0.5));
     addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", _minDelayTime, _maxDelayTime, _maxDelayTime));
+    addParameter(_delayTimeSmoothAmountParam = new AudioParameterFloat("delayTimeSmoothAmount", "Delay Time Smooth Amount", _minDelayTimeSmoothAmount, _maxDelayTimeSmoothAmount, 0.1));
 }
 
 MelodrumaticAudioProcessor::~MelodrumaticAudioProcessor()
@@ -147,8 +149,10 @@ void MelodrumaticAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
     // Delay time
     _delayTimeInSamples = sampleRate * _delayTimeParam->get();
     _delayTimeSmoothed = _delayTimeParam->get();
+    // _delayTimeSmoothAmount = _delayTimeSmoothAmountParam->get();
     
     // Calculate circular buffer length based on sample rate
+    // _circularBufferLength = (int)(sampleRate * jmax(_maxDelayTime, _maxDelayTimeSmoothAmount));
     _circularBufferLength = (int)(sampleRate * _maxDelayTime);
     
     // Initialize circular buffers based on sample rate and delay time
@@ -295,7 +299,9 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     for (int i=0; i<buffer.getNumSamples(); i++) {
         
         // Smooth delay
-        _delayTimeSmoothed = _delayTimeSmoothed - (_delayTimeSmoothAmount * (_delayTimeSmoothed - _delayTimeParam->get()));
+        // _delayTimeSmoothed = _delayTimeSmoothed - (_delayTimeSmoothAmount * (_delayTimeSmoothed - _delayTimeParam->get()));
+        _delayTimeSmoothed = _delayTimeSmoothed - (_delayTimeSmoothAmountParam->get() * _delayTimeMultiplier * (_delayTimeSmoothed - _delayTimeParam->get()));
+        // DBG("Multiplied smooth param=" << _delayTimeSmoothAmountParam->get() * _delayTimeMultiplier);
         
         // Update delay time in samples based on sample rate, smoothed, and multiplier
         float prevDelayTimeInSamples = _delayTimeInSamples;
@@ -384,6 +390,7 @@ void MelodrumaticAudioProcessor::getStateInformation (MemoryBlock& destData)
     xml->setAttribute("dryWet", _dryWetParam->get());
     xml->setAttribute("feedback", _feedbackParam->get());
     xml->setAttribute("delayTime", _delayTimeParam->get());
+    xml->setAttribute("delayTimeSmoothAmount", _delayTimeSmoothAmountParam->get());
     xml->setAttribute("interprocessPipeSuffix", _interprocessPipeSuffix);
     
     // Copy the XML data to destination blob
@@ -403,6 +410,7 @@ void MelodrumaticAudioProcessor::setStateInformation (const void* data, int size
         *_dryWetParam = xml->getDoubleAttribute("dryWet");
         *_feedbackParam = xml->getDoubleAttribute("feedback");
         *_delayTimeParam = xml->getDoubleAttribute("delayTime");
+        *_delayTimeSmoothAmountParam = xml->getDoubleAttribute("delayTimeSmoothAmount");
         
         setInterprocessPipeSuffix(xml->getStringAttribute("interprocessPipeSuffix"), true);
     }

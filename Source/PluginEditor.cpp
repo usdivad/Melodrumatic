@@ -29,6 +29,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     AudioParameterFloat* dryWetParam = (AudioParameterFloat*)params.getUnchecked(0);
     AudioParameterFloat* feedbackParam = (AudioParameterFloat*)params.getUnchecked(1);
     AudioParameterFloat* delayTimeParam = (AudioParameterFloat*)params.getUnchecked(2);
+    AudioParameterFloat* delayTimeSmoothAmountParam = (AudioParameterFloat*)params.getUnchecked(3);
     
     // ================================================================
     // Dry/Wet
@@ -84,7 +85,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // Delay time
-    _delayTimeSlider.setBounds(200, 150, 150, 120);
+    _delayTimeSlider.setBounds(550, 150, 150, 120);
     _delayTimeSlider.setLookAndFeel(&_lookAndFeel);
     _delayTimeSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _delayTimeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
@@ -108,6 +109,33 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     _delayTimeLabel.setFont(_lookAndFeel.getGSRegularFont());
     _delayTimeLabel.attachToComponent(&_delayTimeSlider, false);
     addAndMakeVisible(_delayTimeLabel);
+    
+    // ================================================================
+    // Delay time smooth amount
+    _delayTimeSmoothAmountSlider.setBounds(200, 150, 100, 100);
+    _delayTimeSmoothAmountSlider.setLookAndFeel(&_lookAndFeel);
+    _delayTimeSmoothAmountSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+    _delayTimeSmoothAmountSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
+    _delayTimeSmoothAmountSlider.setRange(delayTimeSmoothAmountParam->range.start, delayTimeSmoothAmountParam->range.end);
+    _delayTimeSmoothAmountSlider.setValue(delayTimeSmoothAmountParam->get());
+    addAndMakeVisible(_delayTimeSmoothAmountSlider);
+    
+    _delayTimeSmoothAmountSlider.onValueChange = [this, delayTimeSmoothAmountParam] {
+        *delayTimeSmoothAmountParam = _delayTimeSmoothAmountSlider.getValue();
+        DBG("delayTimeSmoothAmountParam=" << *delayTimeSmoothAmountParam);
+    };
+    _delayTimeSmoothAmountSlider.onDragStart = [delayTimeSmoothAmountParam] {
+        delayTimeSmoothAmountParam->beginChangeGesture();
+    };
+    _delayTimeSmoothAmountSlider.onDragEnd = [delayTimeSmoothAmountParam] {
+        delayTimeSmoothAmountParam->endChangeGesture();
+    };
+    
+    _delayTimeSmoothAmountLabel.setText("Glissando", NotificationType::dontSendNotification);
+    _delayTimeSmoothAmountLabel.setJustificationType(Justification::centred);
+    _delayTimeSmoothAmountLabel.setFont(_lookAndFeel.getGSRegularFont());
+    _delayTimeSmoothAmountLabel.attachToComponent(&_delayTimeSmoothAmountSlider, false);
+    addAndMakeVisible(_delayTimeSmoothAmountLabel);
     
     // ================================================================
     // Interprocess pipe text editor
