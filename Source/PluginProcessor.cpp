@@ -300,7 +300,7 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         
         // Smooth delay
         // _delayTimeSmoothed = _delayTimeSmoothed - (_delayTimeSmoothAmount * (_delayTimeSmoothed - _delayTimeParam->get()));
-        _delayTimeSmoothed = _delayTimeSmoothed - (_delayTimeSmoothAmountParam->get() * _delayTimeMultiplier * (_delayTimeSmoothed - _delayTimeParam->get()));
+        _delayTimeSmoothed = _delayTimeSmoothed - (jmax((_maxDelayTimeSmoothAmount - _delayTimeSmoothAmountParam->get()), _minDelayTimeSmoothAmount) * _delayTimeMultiplier * (_delayTimeSmoothed - _delayTimeParam->get()));
         // DBG("Multiplied smooth param=" << _delayTimeSmoothAmountParam->get() * _delayTimeMultiplier);
         
         // Update delay time in samples based on sample rate, smoothed, and multiplier
