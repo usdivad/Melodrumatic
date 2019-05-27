@@ -13,7 +13,9 @@
 MelodrumaticLookAndFeel::MelodrumaticLookAndFeel()
 {
     // Slider
-    setColour(Slider::thumbColourId, Colour(0xff8e44ad));
+    setColour(Slider::backgroundColourId, Colour(0xff8e44ad)); // 0xff8e44ad
+    setColour(Slider::trackColourId, Colour(0xff8e44ad));
+    setColour(Slider::thumbColourId, Colour(0xffffffff));
     
     
     // MIDI keyboard

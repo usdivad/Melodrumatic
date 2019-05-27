@@ -84,34 +84,6 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     addAndMakeVisible(_feedbackLabel);
     
     // ================================================================
-    // Delay time
-    _delayTimeSlider.setBounds(550, 150, 150, 120);
-    _delayTimeSlider.setLookAndFeel(&_lookAndFeel);
-    _delayTimeSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
-    _delayTimeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
-    _delayTimeSlider.setRange(delayTimeParam->range.start, delayTimeParam->range.end); // Allow for microtones
-    // _delayTimeSlider.setRange(delayTimeParam->range.start, delayTimeParam->range.end, 1); // No microtones
-    _delayTimeSlider.setValue(delayTimeParam->get());
-    addAndMakeVisible(_delayTimeSlider);
-    
-    _delayTimeSlider.onValueChange = [this, delayTimeParam] {
-        *delayTimeParam = _delayTimeSlider.getValue();
-        DBG("delayTimeParam=" << *delayTimeParam);
-    };
-    _delayTimeSlider.onDragStart = [delayTimeParam] {
-        delayTimeParam->beginChangeGesture();
-    };
-    _delayTimeSlider.onDragEnd = [delayTimeParam] {
-        delayTimeParam->endChangeGesture();
-    };
-    
-    _delayTimeLabel.setText("Delay Time (MIDI Note)", NotificationType::dontSendNotification);
-    _delayTimeLabel.setJustificationType(Justification::centred);
-    _delayTimeLabel.setFont(_lookAndFeel.getGSRegularFont());
-    _delayTimeLabel.attachToComponent(&_delayTimeSlider, false);
-    addAndMakeVisible(_delayTimeLabel);
-    
-    // ================================================================
     // Delay time smooth amount
     _delayTimeSmoothAmountSlider.setBounds(200, 150, 100, 100);
     _delayTimeSmoothAmountSlider.setLookAndFeel(&_lookAndFeel);
@@ -163,7 +135,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // MIDI keyboard
     float midiKeyboardComponentX = 20;
     float midiKeyboardComponentWidth = editorWidth - (midiKeyboardComponentX * 2);
-    _midiKeyboardComponent.setBounds(midiKeyboardComponentX, 20, midiKeyboardComponentWidth, 100);
+    _midiKeyboardComponent.setBounds(midiKeyboardComponentX, 25, midiKeyboardComponentWidth, 100);
     _midiKeyboardComponent.setAvailableRange(0, 127);
     _midiKeyboardComponent.setLowestVisibleKey(0);
     _midiKeyboardComponent.setKeyWidth(midiKeyboardComponentWidth / (128.0 - (5 * (128.0/12)))); // White keys only
@@ -171,6 +143,36 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // _midiKeyboardComponent.setBlackNoteWidthProportion(0.8);
     _midiKeyboardComponent.setLookAndFeel(&_lookAndFeel);
     addAndMakeVisible(_midiKeyboardComponent);
+    
+    // ================================================================
+    // Delay time
+    _delayTimeSlider.setBounds(midiKeyboardComponentX, 110, midiKeyboardComponentWidth, 50);
+    _delayTimeSlider.setLookAndFeel(&_lookAndFeel);
+    // _delayTimeSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+    _delayTimeSlider.setSliderStyle(Slider::SliderStyle::LinearHorizontal);
+    // _delayTimeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    _delayTimeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
+    _delayTimeSlider.setRange(delayTimeParam->range.start, delayTimeParam->range.end); // Allow for microtones
+    // _delayTimeSlider.setRange(delayTimeParam->range.start, delayTimeParam->range.end, 1); // No microtones
+    _delayTimeSlider.setValue(delayTimeParam->get());
+    addAndMakeVisible(_delayTimeSlider);
+    
+    _delayTimeSlider.onValueChange = [this, delayTimeParam] {
+        *delayTimeParam = _delayTimeSlider.getValue();
+        DBG("delayTimeParam=" << *delayTimeParam);
+    };
+    _delayTimeSlider.onDragStart = [delayTimeParam] {
+        delayTimeParam->beginChangeGesture();
+    };
+    _delayTimeSlider.onDragEnd = [delayTimeParam] {
+        delayTimeParam->endChangeGesture();
+    };
+    
+    _delayTimeLabel.setText("Delay Time (MIDI Note)", NotificationType::dontSendNotification);
+    _delayTimeLabel.setJustificationType(Justification::centred);
+    _delayTimeLabel.setFont(_lookAndFeel.getGSRegularFont());
+    _delayTimeLabel.attachToComponent(&_midiKeyboardComponent, false);
+    addAndMakeVisible(_delayTimeLabel);
     
     // ================================================================
     // Title
