@@ -112,24 +112,24 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // Interprocess pipe text editor
-    _interprocessPipeSuffixTextEditor.setBounds(400, 175, 100, 20);
-    _interprocessPipeSuffixTextEditor.setText(processor.getInterprocessPipeSuffix(), NotificationType::dontSendNotification);
-    _interprocessPipeSuffixTextEditor.setColour(Label::ColourIds::outlineColourId, Colours::white);
-    _interprocessPipeSuffixTextEditor.setJustificationType(Justification::centred);
-    _interprocessPipeSuffixTextEditor.setFont(_lookAndFeel.getGSRegularFont());
-    _interprocessPipeSuffixTextEditor.setEditable(true);
-    // _interprocessPipeIdLabel.attachToComponent(&_delayTimeSlider, true);
-    addAndMakeVisible(_interprocessPipeSuffixTextEditor);
-    
-    _interprocessPipeSuffixTextEditor.onTextChange = [this] {
-        processor.setInterprocessPipeSuffix(_interprocessPipeSuffixTextEditor.getText(), false);
-    };
-    
-    _interprocessPipeSuffixLabel.setText("Plugin Pair ID", NotificationType::dontSendNotification);
-    _interprocessPipeSuffixLabel.setJustificationType(Justification::centred);
-    _interprocessPipeSuffixLabel.setFont(_lookAndFeel.getGSRegularFont());
-    _interprocessPipeSuffixLabel.attachToComponent(&_interprocessPipeSuffixTextEditor, false);
-    addAndMakeVisible(_interprocessPipeSuffixLabel);
+    // _interprocessPipeSuffixTextEditor.setBounds(400, 175, 100, 20);
+    // _interprocessPipeSuffixTextEditor.setText(processor.getInterprocessPipeSuffix(), NotificationType::dontSendNotification);
+    // _interprocessPipeSuffixTextEditor.setColour(Label::ColourIds::outlineColourId, Colours::white);
+    // _interprocessPipeSuffixTextEditor.setJustificationType(Justification::centred);
+    // _interprocessPipeSuffixTextEditor.setFont(_lookAndFeel.getGSRegularFont());
+    // _interprocessPipeSuffixTextEditor.setEditable(true);
+    // // _interprocessPipeIdLabel.attachToComponent(&_delayTimeSlider, true);
+    // addAndMakeVisible(_interprocessPipeSuffixTextEditor);
+    // 
+    // _interprocessPipeSuffixTextEditor.onTextChange = [this] {
+    //     processor.setInterprocessPipeSuffix(_interprocessPipeSuffixTextEditor.getText(), false);
+    // };
+    // 
+    // _interprocessPipeSuffixLabel.setText("Plugin Pair ID", NotificationType::dontSendNotification);
+    // _interprocessPipeSuffixLabel.setJustificationType(Justification::centred);
+    // _interprocessPipeSuffixLabel.setFont(_lookAndFeel.getGSRegularFont());
+    // _interprocessPipeSuffixLabel.attachToComponent(&_interprocessPipeSuffixTextEditor, false);
+    // addAndMakeVisible(_interprocessPipeSuffixLabel);
     
     // ================================================================
     // MIDI keyboard
