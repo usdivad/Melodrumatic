@@ -18,7 +18,8 @@
 /**
 */
 class MelodrumaticAudioProcessorEditor  : public AudioProcessorEditor,
-                                      public Timer
+                                          public Timer,
+                                          public MidiKeyboardStateListener
 {
 public:
     MelodrumaticAudioProcessorEditor (MelodrumaticAudioProcessor&);
@@ -30,6 +31,8 @@ public:
     
     //==============================================================================
     void timerCallback() override;
+    void handleNoteOn(MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity) override;
+    void handleNoteOff(MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity) override;
 
 private:
     // This reference is provided as a quick way for your editor to

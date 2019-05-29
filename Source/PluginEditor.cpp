@@ -120,11 +120,11 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // _interprocessPipeSuffixTextEditor.setEditable(true);
     // // _interprocessPipeIdLabel.attachToComponent(&_delayTimeSlider, true);
     // addAndMakeVisible(_interprocessPipeSuffixTextEditor);
-    // 
+    //
     // _interprocessPipeSuffixTextEditor.onTextChange = [this] {
     //     processor.setInterprocessPipeSuffix(_interprocessPipeSuffixTextEditor.getText(), false);
     // };
-    // 
+    //
     // _interprocessPipeSuffixLabel.setText("Plugin Pair ID", NotificationType::dontSendNotification);
     // _interprocessPipeSuffixLabel.setJustificationType(Justification::centred);
     // _interprocessPipeSuffixLabel.setFont(_lookAndFeel.getGSRegularFont());
@@ -143,6 +143,9 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // _midiKeyboardComponent.setBlackNoteWidthProportion(0.8);
     _midiKeyboardComponent.setLookAndFeel(&_lookAndFeel);
     addAndMakeVisible(_midiKeyboardComponent);
+    
+    // MIDI keyboard state
+    _midiKeyboardState.addListener(this);
     
     // ================================================================
     // Delay time
@@ -226,4 +229,25 @@ void MelodrumaticAudioProcessorEditor::timerCallback()
         _midiKeyboardState.allNotesOff(1);
         _midiKeyboardState.noteOn(1, midiNote, 1.0);
     }
+}
+
+void MelodrumaticAudioProcessorEditor::handleNoteOn(MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity)
+{
+    // Get params from processor
+    auto& params = processor.getParameters();
+    AudioParameterFloat* delayTimeParam = (AudioParameterFloat*)params.getUnchecked(2);
+    
+    // Set params
+    int midiNote = jmin(midiNoteNumber + 1, 127); // Add one for internal representation
+    *delayTimeParam = midiNote;
+    
+    // Update GUI
+    _delayTimeSlider.setValue(delayTimeParam->get());
+    
+    DBG("noteOn: " << midiNoteNumber);
+}
+
+void MelodrumaticAudioProcessorEditor::handleNoteOff(MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity)
+{
+    // pass
 }
