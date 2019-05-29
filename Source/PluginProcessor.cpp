@@ -309,9 +309,10 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         _delayTimeInSamples = getSampleRate() * (1 / midiNoteToHz(_delayTimeSmoothed)); // MIDI, with smoothing
         // _delayTimeInSamples = getSampleRate() * (1 / midiNoteToHz(_delayTimeParam->get())); // MIDI, no smoothing
         
-        if (_delayTimeInSamples != prevDelayTimeInSamples) {
-            DBG(_processName << " (" << _trackProperties.name << "): " << "_delayTimeInSamples=" << _delayTimeInSamples << ", sampleRate=" << getSampleRate());
-        }
+        // This debug statement breaks performance
+        // if (_delayTimeInSamples != prevDelayTimeInSamples) {
+        //     DBG(_processName << " (" << _trackProperties.name << "): " << "_delayTimeInSamples=" << _delayTimeInSamples << ", sampleRate=" << getSampleRate());
+        // }
         
         // Write sample to circular buffer
         // and also add feedback
