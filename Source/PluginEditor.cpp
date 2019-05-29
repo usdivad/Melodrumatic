@@ -89,6 +89,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     _delayTimeSmoothAmountSlider.setLookAndFeel(&_lookAndFeel);
     _delayTimeSmoothAmountSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _delayTimeSmoothAmountSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
+    _delayTimeSmoothAmountSlider.setSkewFactor(5.0);
     _delayTimeSmoothAmountSlider.setRange(delayTimeSmoothAmountParam->range.start, delayTimeSmoothAmountParam->range.end);
     _delayTimeSmoothAmountSlider.setValue(delayTimeSmoothAmountParam->get());
     addAndMakeVisible(_delayTimeSmoothAmountSlider);
