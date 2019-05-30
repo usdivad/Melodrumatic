@@ -26,6 +26,11 @@
       <FILE id="vcoHUY" name="gs_regular.ttf" compile="0" resource="1" file="Fonts/gs_regular.ttf"/>
       <FILE id="xKOUoY" name="pcd.ttf" compile="0" resource="1" file="Fonts/pcd.ttf"/>
     </GROUP>
+    <GROUP id="{19DEBBF7-9F58-F4FB-3A34-05C5B15D0DD8}" name="Images">
+      <FILE id="OzVGCA" name="DavidSuLogo.png" compile="0" resource="1" file="Images/DavidSuLogo.png"/>
+      <FILE id="GiTqvQ" name="MelodrumaticTitle.png" compile="0" resource="1"
+            file="Images/MelodrumaticTitle.png"/>
+    </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">
