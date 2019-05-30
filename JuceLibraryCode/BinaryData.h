@@ -24,10 +24,10 @@ namespace BinaryData
     const int            pcd_ttfSize = 15044;
 
     extern const char*   DavidSuLogo_png;
-    const int            DavidSuLogo_pngSize = 287997;
+    const int            DavidSuLogo_pngSize = 346528;
 
     extern const char*   MelodrumaticTitle_png;
-    const int            MelodrumaticTitle_pngSize = 69028;
+    const int            MelodrumaticTitle_pngSize = 92687;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 7;

@@ -37,7 +37,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     float rotarySliderHeight = 75;
     float rotarySliderXOffset = editorWidth * 0.5;
     float rotarySliderXMargin = 100;
-    float rotarySliderY = 250;
+    float rotarySliderY = 265;
     
     // ================================================================
     // Dry/Wet
@@ -143,7 +143,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // ================================================================
     // MIDI keyboard
     float midiKeyboardComponentX = 20;
-    float midiKeyboardComponentY = 90;
+    float midiKeyboardComponentY = 110;
     float midiKeyboardComponentWidth = editorWidth - (midiKeyboardComponentX * 2);
     _midiKeyboardComponent.setBounds(midiKeyboardComponentX, midiKeyboardComponentY, midiKeyboardComponentWidth, 100);
     _midiKeyboardComponent.setAvailableRange(0, 127);
@@ -190,13 +190,13 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // ================================================================
     // Title
     // TODO: Eventually make this an image with bloom & plume
-    float titleX = 20;
-    float titleY = titleX / 2.0;
-    _titleLabel.setBounds(titleX, titleY, 150, 50);
-    _titleLabel.setText("Melodrumatic", NotificationType::dontSendNotification);
-    _titleLabel.setJustificationType(Justification::centred);
-    _titleLabel.setFont(_lookAndFeel.getPCDFont());
-    addAndMakeVisible(_titleLabel);
+    // float titleX = 20;
+    // float titleY = titleX / 2.0;
+    // _titleLabel.setBounds(titleX, titleY, 150, 50);
+    // _titleLabel.setText("Melodrumatic", NotificationType::dontSendNotification);
+    // _titleLabel.setJustificationType(Justification::centred);
+    // _titleLabel.setFont(_lookAndFeel.getPCDFont());
+    // addAndMakeVisible(_titleLabel);
     
     
     // ================================================================
@@ -217,6 +217,32 @@ void MelodrumaticAudioProcessorEditor::paint (Graphics& g)
     // g.setColour (Colours::white);
     // g.setFont (15.0f);
     // g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
+    
+    // ================================
+    // Images!
+    
+    // Title
+    Image titleImage = ImageCache::getFromMemory(BinaryData::MelodrumaticTitle_png, BinaryData::MelodrumaticTitle_pngSize);
+
+    int titleImageSourceWidth = 1024;
+    int titleImageSourceHeight = 341;
+    float titleImageScale = 0.25;
+    int titleImageDestWidth = (int) (titleImageSourceWidth * titleImageScale);
+    int titleImageDestHeight = (int) (titleImageSourceHeight * titleImageScale);
+    
+    g.drawImage(titleImage, 15, 0, titleImageDestWidth, titleImageDestHeight, 0, 0, titleImageSourceWidth, titleImageSourceHeight);
+    
+    
+    // Logo / byline
+    Image logoImage = ImageCache::getFromMemory(BinaryData::DavidSuLogo_png, BinaryData::DavidSuLogo_pngSize);
+    
+    int logoImageSourceWidth = 1024;
+    int logoImageSourceHeight = 1024;
+    float logoImageScale = 0.075;
+    int logoImageDestWidth = (int) (logoImageSourceWidth * logoImageScale);
+    int logoImageDestHeight = (int) (logoImageSourceHeight * logoImageScale);
+    
+    g.drawImage(logoImage, getWidth() - logoImageDestWidth - 15, 10, logoImageDestWidth, logoImageDestHeight, 0, 0, logoImageSourceWidth, logoImageSourceHeight);
 }
 
 void MelodrumaticAudioProcessorEditor::resized()
