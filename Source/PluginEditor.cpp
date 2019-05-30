@@ -17,6 +17,9 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
       _midiKeyboardState(),
       _midiKeyboardComponent(_midiKeyboardState, MidiKeyboardComponent::Orientation::horizontalKeyboard)
 {
+    // ================================================================
+    // Editor window
+    
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     int editorWidth = 800;
@@ -24,7 +27,10 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     setSize (editorWidth, editorHeight);
     
     // Look and feel
-    setLookAndFeel(&_lookAndFeel);
+    // setLookAndFeel(&_lookAndFeel); // We run into assertion errors since the LookAndFeel gets destroyed before the editor itself
+    
+    // Resizable
+    setResizable(false, false);
     
     // ================================================================
     // Get params from processor
@@ -38,8 +44,9 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // Shared slider values
     float rotarySliderWidth = 75;
     float rotarySliderHeight = 75;
-    float rotarySliderXOffset = editorWidth * 0.5;
     float rotarySliderXMargin = 100;
+    // float rotarySliderXOffset = (editorWidth * 0.5) + rotarySliderWidth;
+    float rotarySliderXOffset = (editorWidth * 0.5) - (((rotarySliderWidth*3) + (rotarySliderXMargin*2)) / 3);
     float rotarySliderY = 265;
     
     // ================================================================
@@ -215,7 +222,8 @@ MelodrumaticAudioProcessorEditor::~MelodrumaticAudioProcessorEditor()
 void MelodrumaticAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+    // g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+    g.fillAll(Colour(0xff000000));
 
     // g.setColour (Colours::white);
     // g.setFont (15.0f);
