@@ -23,6 +23,9 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     int editorHeight = 360; // 320
     setSize (editorWidth, editorHeight);
     
+    // Look and feel
+    setLookAndFeel(&_lookAndFeel);
+    
     // ================================================================
     // Get params from processor
     auto& params = processor.getParameters();

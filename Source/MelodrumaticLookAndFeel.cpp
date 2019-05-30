@@ -12,11 +12,13 @@
 
 MelodrumaticLookAndFeel::MelodrumaticLookAndFeel()
 {
+    // Editor window
+    setColour(ResizableWindow::backgroundColourId, Colour(0xff000000));
+    
     // Slider
     setColour(Slider::backgroundColourId, Colour(0xff8e44ad)); // 0xff8e44ad
     setColour(Slider::trackColourId, Colour(0xff8e44ad));
     setColour(Slider::thumbColourId, Colour(0xffffffff));
-    
     
     // MIDI keyboard
     setColour(MidiKeyboardComponent::ColourIds::blackNoteColourId, Colour(0xff7d3c98));
