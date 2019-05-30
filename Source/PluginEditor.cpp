@@ -20,7 +20,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     int editorWidth = 800;
-    int editorHeight = 320;
+    int editorHeight = 360; // 320
     setSize (editorWidth, editorHeight);
     
     // ================================================================
@@ -32,8 +32,16 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     AudioParameterFloat* delayTimeSmoothAmountParam = (AudioParameterFloat*)params.getUnchecked(3);
     
     // ================================================================
+    // Shared slider values
+    float rotarySliderWidth = 75;
+    float rotarySliderHeight = 75;
+    float rotarySliderXOffset = editorWidth * 0.5;
+    float rotarySliderXMargin = 100;
+    float rotarySliderY = 250;
+    
+    // ================================================================
     // Dry/Wet
-    _dryWetSlider.setBounds(0, 150, 100, 100);
+    _dryWetSlider.setBounds(rotarySliderXOffset, rotarySliderY, rotarySliderWidth, rotarySliderHeight);
     _dryWetSlider.setLookAndFeel(&_lookAndFeel);
     _dryWetSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _dryWetSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
@@ -59,7 +67,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // Feedback
-    _feedbackSlider.setBounds(100, 150, 100, 100);
+    _feedbackSlider.setBounds(rotarySliderXOffset + (rotarySliderXMargin * 1), rotarySliderY, rotarySliderWidth, rotarySliderHeight);
     _feedbackSlider.setLookAndFeel(&_lookAndFeel);
     _feedbackSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _feedbackSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
@@ -85,7 +93,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // Delay time smooth amount
-    _delayTimeSmoothAmountSlider.setBounds(200, 150, 100, 100);
+    _delayTimeSmoothAmountSlider.setBounds(rotarySliderXOffset + (rotarySliderXMargin * 2), rotarySliderY, rotarySliderWidth, rotarySliderHeight);
     _delayTimeSmoothAmountSlider.setLookAndFeel(&_lookAndFeel);
     _delayTimeSmoothAmountSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _delayTimeSmoothAmountSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
@@ -135,8 +143,9 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // ================================================================
     // MIDI keyboard
     float midiKeyboardComponentX = 20;
+    float midiKeyboardComponentY = 90;
     float midiKeyboardComponentWidth = editorWidth - (midiKeyboardComponentX * 2);
-    _midiKeyboardComponent.setBounds(midiKeyboardComponentX, 25, midiKeyboardComponentWidth, 100);
+    _midiKeyboardComponent.setBounds(midiKeyboardComponentX, midiKeyboardComponentY, midiKeyboardComponentWidth, 100);
     _midiKeyboardComponent.setAvailableRange(0, 127);
     _midiKeyboardComponent.setLowestVisibleKey(0);
     _midiKeyboardComponent.setKeyWidth(midiKeyboardComponentWidth / (128.0 - (5 * (128.0/12)))); // White keys only
@@ -150,7 +159,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     
     // ================================================================
     // Delay time
-    _delayTimeSlider.setBounds(midiKeyboardComponentX, 110, midiKeyboardComponentWidth, 50);
+    _delayTimeSlider.setBounds(midiKeyboardComponentX, midiKeyboardComponentY + 85, midiKeyboardComponentWidth, 50);
     _delayTimeSlider.setLookAndFeel(&_lookAndFeel);
     // _delayTimeSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     _delayTimeSlider.setSliderStyle(Slider::SliderStyle::LinearHorizontal);
@@ -181,7 +190,9 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // ================================================================
     // Title
     // TODO: Eventually make this an image with bloom & plume
-    _titleLabel.setBounds(30, editorHeight - 60, 150, 50);
+    float titleX = 20;
+    float titleY = titleX / 2.0;
+    _titleLabel.setBounds(titleX, titleY, 150, 50);
     _titleLabel.setText("Melodrumatic", NotificationType::dontSendNotification);
     _titleLabel.setJustificationType(Justification::centred);
     _titleLabel.setFont(_lookAndFeel.getPCDFont());
