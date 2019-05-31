@@ -191,7 +191,7 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
         delayTimeParam->endChangeGesture();
     };
     
-    _delayTimeLabel.setText("Delay Time (MIDI Note)", NotificationType::dontSendNotification);
+    _delayTimeLabel.setText("Target Pitch = MIDI Note = Delay Time", NotificationType::dontSendNotification);
     _delayTimeLabel.setJustificationType(Justification::centred);
     _delayTimeLabel.setFont(_lookAndFeel.getGSRegularFont());
     _delayTimeLabel.attachToComponent(&_midiKeyboardComponent, false);
