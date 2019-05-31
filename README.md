@@ -7,7 +7,7 @@ Melodrumatic is an audio plugin that lets you "pitch-shift" via delay (i.e. the 
 
 
 ## Available Formats
-VST3, AU
+VST3, AU, AAX
 
 ## Contact
 Please [get in touch](mailto:hello@usdivad.com) if you end up making any cool music or sounds using this! (or if you have any questions/comments/etc.)
