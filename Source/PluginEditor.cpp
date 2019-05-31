@@ -317,8 +317,15 @@ void MelodrumaticAudioProcessorEditor::timerCallback()
 {
     // Update GUI based on params
     auto& params = processor.getParameters();
+    AudioParameterFloat* dryWetParam = (AudioParameterFloat*)params.getUnchecked(0);
+    AudioParameterFloat* feedbackParam = (AudioParameterFloat*)params.getUnchecked(1);
     AudioParameterFloat* delayTimeParam = (AudioParameterFloat*)params.getUnchecked(2);
+    AudioParameterFloat* delayTimeSmoothAmountParam = (AudioParameterFloat*)params.getUnchecked(3);
+    
+    _dryWetSlider.setValue(dryWetParam->get());
+    _feedbackSlider.setValue(feedbackParam->get());
     _delayTimeSlider.setValue(delayTimeParam->get());
+    _delayTimeSmoothAmountSlider.setValue(delayTimeSmoothAmountParam->get());
     
     int midiNote = jmax((int) delayTimeParam->get() - 1, 1); // Subtract one to get back to original note
     // DBG("_delayTimeSlider value = " << _delayTimeSlider.getValue());
