@@ -16,7 +16,7 @@
 /**
 */
 class MelodrumaticAudioProcessor  : public AudioProcessor,
-                                public InterprocessConnection
+                                    public InterprocessConnection
 {
 public:
     //==============================================================================
@@ -79,6 +79,7 @@ public:
     String getInterprocessPipeFullName();
     void setInterprocessPipeSuffix(String suffix, bool fromSetStateInformation);
     String getInterprocessPipeSuffix();
+    float getRMSE();
     
 private:
     //==============================================================================
@@ -109,6 +110,9 @@ private:
     
     // MIDI
     // int _mostRecentMidiNote;
+    
+    // RMSE
+    float _rmse;
     
 
     //==============================================================================

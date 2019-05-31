@@ -295,6 +295,10 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     float* leftChannel = buffer.getWritePointer(0);
     float* rightChannel = buffer.getWritePointer(1);
     
+    // For RMSE
+    float sampleValuesSquaredLeft = 0;
+    float sampleValuesSquaredRight = 0;
+    
     // Write to circular buffer
     for (int i=0; i<buffer.getNumSamples(); i++) {
         
@@ -363,7 +367,26 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         if (_circularBufferWriteHead >= _circularBufferLength) {
             _circularBufferWriteHead = 0;
         }
+        
+        
+        // Add to total values
+        float sampleValueLeft = buffer.getSample(0, i);
+        float sampleValueRight = buffer.getSample(1, i);
+        
+        sampleValuesSquaredLeft += sampleValueLeft * sampleValueLeft;
+        sampleValuesSquaredRight += sampleValueRight * sampleValueRight;
     }
+    
+    // Compute RMSE
+    float sampleValuesSquared = (sampleValuesSquaredLeft + sampleValuesSquaredRight) * 0.5;
+    float sampleValuesSquaredAvg = sampleValuesSquared / buffer.getNumSamples();
+    _rmse = sqrt(sampleValuesSquaredAvg);
+    
+    
+    // float sampleAvgLeft = sampleValuesLeft / buffer.getNumSamples();
+    // float sampleAvgRight = sampleValuesRight / buffer.getNumSamples();
+    // float sampleAvgCombined = (sampleAvgLeft + sampleAvgRight) * 0.5;
+    
 }
 
 //==============================================================================
@@ -551,6 +574,11 @@ void MelodrumaticAudioProcessor::setInterprocessPipeSuffix(String suffix, bool f
 String MelodrumaticAudioProcessor::getInterprocessPipeSuffix()
 {
     return _interprocessPipeSuffix;
+}
+
+float MelodrumaticAudioProcessor::getRMSE()
+{
+    return _rmse;
 }
 
 

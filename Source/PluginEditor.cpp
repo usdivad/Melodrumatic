@@ -278,6 +278,10 @@ void MelodrumaticAudioProcessorEditor::timerCallback()
         _midiKeyboardState.allNotesOff(1);
         _midiKeyboardState.noteOn(1, midiNote, 1.0);
     }
+    
+    
+    // RMSE
+    DBG("RMSE=" << processor.getRMSE());
 }
 
 void MelodrumaticAudioProcessorEditor::handleNoteOn(MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity)
