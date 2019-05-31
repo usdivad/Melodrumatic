@@ -262,7 +262,7 @@ void MelodrumaticAudioProcessorEditor::paint (Graphics& g)
     // vizColour = vizColour.withMultipliedAlpha(1.0f);
     
     g.setColour(vizColour);
-    DBG(vizColour.toDisplayString(true));
+    DBG("vizColour=" << vizColour.toDisplayString(true));
     // g.fillEllipse(getWidth() * 0.5, 5, 50, 50); // Test element for color
     
     
@@ -330,9 +330,13 @@ void MelodrumaticAudioProcessorEditor::timerCallback()
     
     
     // RMSE
-    // TODO: Only repaint if difference from prev is noticeably different
-    DBG("RMSE=" << processor.getRMSE());
-    repaint();
+    float currRMSE = processor.getRMSE();
+    if (currRMSE != _prevRMSE) // Only repaint if difference from prev is noticeably different
+    {
+        DBG("RMSE=" << processor.getRMSE());
+        repaint();
+    }
+    _prevRMSE = currRMSE;
 }
 
 void MelodrumaticAudioProcessorEditor::handleNoteOn(MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity)
