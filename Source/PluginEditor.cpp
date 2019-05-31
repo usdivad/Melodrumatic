@@ -198,8 +198,9 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     addAndMakeVisible(_delayTimeLabel);
     
     // ================================================================
-    // Title
-    // TODO: Eventually make this an image with bloom & plume
+    // Title & logo
+    
+    // Old approach using text (now we have images with bloom & plume)
     // float titleX = 20;
     // float titleY = titleX / 2.0;
     // _titleLabel.setBounds(titleX, titleY, 150, 50);
@@ -207,6 +208,32 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // _titleLabel.setJustificationType(Justification::centred);
     // _titleLabel.setFont(_lookAndFeel.getPCDFont());
     // addAndMakeVisible(_titleLabel);
+    
+    // Hyperlinks
+    URL titleURL = URL("https://github.com/usdivad/Melodrumatic");
+    URL logoURL = URL("https://usdivad.com/");
+    
+    // TODO: Don't hard-code this (it's directly copied from paint() atm)
+    //       We can easily just turn them into member variables
+    int titleImageSourceWidth = 1024;
+    int titleImageSourceHeight = 341;
+    float titleImageScale = 0.25;
+    int titleImageDestWidth = (int) (titleImageSourceWidth * titleImageScale);
+    int titleImageDestHeight = (int) (titleImageSourceHeight * titleImageScale);
+    
+    int logoImageSourceWidth = 1024;
+    int logoImageSourceHeight = 1024;
+    float logoImageScale = 0.075;
+    int logoImageDestWidth = (int) (logoImageSourceWidth * logoImageScale);
+    int logoImageDestHeight = (int) (logoImageSourceHeight * logoImageScale);
+    
+    _titleHyperlink.setURL(titleURL);
+    _titleHyperlink.setBounds(15, 0, titleImageDestWidth, titleImageDestHeight);
+    addAndMakeVisible(_titleHyperlink);
+    
+    _logoHyperlink.setURL(logoURL);
+    _logoHyperlink.setBounds(getWidth() - logoImageDestWidth - 15, 10, logoImageDestWidth, logoImageDestHeight);
+    addAndMakeVisible(_logoHyperlink);
     
     
     // ================================================================

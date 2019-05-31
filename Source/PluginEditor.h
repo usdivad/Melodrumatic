@@ -64,6 +64,10 @@ private:
     MidiKeyboardState _midiKeyboardState;
     MidiKeyboardComponent _midiKeyboardComponent;
     
+    // Hyperlinks
+    HyperlinkButton _titleHyperlink;
+    HyperlinkButton _logoHyperlink;
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MelodrumaticAudioProcessorEditor)
 };
