@@ -58,7 +58,7 @@ MelodrumaticAudioProcessor::MelodrumaticAudioProcessor()
     addParameter(_feedbackParam = new AudioParameterFloat("feedback", "Feedback", 0, 0.98, 0.5));
     // addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", 0.01, _maxDelayTime, 0.5));
     addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", _minDelayTime, _maxDelayTime, _maxDelayTime));
-    addParameter(_delayTimeSmoothAmountParam = new AudioParameterFloat("delayTimeSmoothAmount", "Delay Time Smooth Amount", _minDelayTimeSmoothAmount, _maxDelayTimeSmoothAmount, 0.1));
+    addParameter(_delayTimeSmoothAmountParam = new AudioParameterFloat("delayTimeSmoothAmount", "Glissando", _minDelayTimeSmoothAmount, _maxDelayTimeSmoothAmount, 0.1));
 }
 
 MelodrumaticAudioProcessor::~MelodrumaticAudioProcessor()
