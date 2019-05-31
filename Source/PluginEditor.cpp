@@ -221,9 +221,28 @@ MelodrumaticAudioProcessorEditor::~MelodrumaticAudioProcessorEditor()
 //==============================================================================
 void MelodrumaticAudioProcessorEditor::paint (Graphics& g)
 {
+    // RMSE visualizer
+    float rmse = processor.getRMSE();
+    float rmseNormalized = jmin(jmax(rmse, 0.0f), 1.0f);
+    Colour vizColourMin = Colour(0xff000000);
+    Colour vizColourMax = Colour(0xff8e44ad);
+    
+    // Using interpolation
+    Colour vizColour = vizColourMin.interpolatedWith(vizColourMax, rmseNormalized);
+    
+    // Using alpha
+    // vizColour = vizColour.withAlpha(rmseNormalized); // Use RMSE to adjust alpha
+    // vizColour = vizColour.withMultipliedAlpha(1.0f);
+    
+    g.setColour(vizColour);
+    DBG(vizColour.toDisplayString(true));
+    // g.fillEllipse(getWidth() * 0.5, 5, 50, 50); // Test element for color
+    
+    
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     // g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-    g.fillAll(Colour(0xff000000));
+    // g.fillAll(Colour(0xff000000));
+    g.fillAll(vizColour); // Let's just use the whole background as a visualizer!
 
     // g.setColour (Colours::white);
     // g.setFont (15.0f);
@@ -254,6 +273,9 @@ void MelodrumaticAudioProcessorEditor::paint (Graphics& g)
     int logoImageDestHeight = (int) (logoImageSourceHeight * logoImageScale);
     
     g.drawImage(logoImage, getWidth() - logoImageDestWidth - 15, 10, logoImageDestWidth, logoImageDestHeight, 0, 0, logoImageSourceWidth, logoImageSourceHeight);
+    
+    
+    
 }
 
 void MelodrumaticAudioProcessorEditor::resized()
@@ -281,7 +303,9 @@ void MelodrumaticAudioProcessorEditor::timerCallback()
     
     
     // RMSE
+    // TODO: Only repaint if difference from prev is noticeably different
     DBG("RMSE=" << processor.getRMSE());
+    repaint();
 }
 
 void MelodrumaticAudioProcessorEditor::handleNoteOn(MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity)
