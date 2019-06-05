@@ -290,10 +290,19 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
 //         // ..do something to the data...
 //     }
     
+    if (buffer.getNumChannels() < 1) {
+        DBG("0 channels in buffer!");
+        return;
+    }
+    
     // Get write pointers for left and right channels
     // TODO: Ensure this works for mono and > 2 channels!
-    float* leftChannel = buffer.getWritePointer(0);
-    float* rightChannel = buffer.getWritePointer(1);
+    bool isMono = buffer.getNumChannels() == 1;
+    int leftChannelIdx = 0;
+    int rightChannelIdx = isMono ? 0 : 1;
+    
+    float* leftChannel = buffer.getWritePointer(leftChannelIdx);
+    float* rightChannel = buffer.getWritePointer(rightChannelIdx);
     
     // For RMSE
     float sampleValuesSquaredLeft = 0;
@@ -355,9 +364,9 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         // buffer.addSample(1, i, delaySampleRight);
         
         // Sum the dry and wet (delayed) samples
-        buffer.setSample(0, i, (buffer.getSample(0, i) * (1 - _dryWetParam->get())) +
+        buffer.setSample(leftChannelIdx, i, (buffer.getSample(leftChannelIdx, i) * (1 - _dryWetParam->get())) +
                                (delaySampleLeft * _dryWetParam->get()));
-        buffer.setSample(1, i, (buffer.getSample(1, i) * (1 - _dryWetParam->get())) +
+        buffer.setSample(rightChannelIdx, i, (buffer.getSample(rightChannelIdx, i) * (1 - _dryWetParam->get())) +
                          (delaySampleLeft * _dryWetParam->get()));
         
         
@@ -370,8 +379,8 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         
         
         // Add to total values
-        float sampleValueLeft = buffer.getSample(0, i);
-        float sampleValueRight = buffer.getSample(1, i);
+        float sampleValueLeft = buffer.getSample(leftChannelIdx, i);
+        float sampleValueRight = buffer.getSample(rightChannelIdx, i);
         
         sampleValuesSquaredLeft += sampleValueLeft * sampleValueLeft;
         sampleValuesSquaredRight += sampleValueRight * sampleValueRight;
