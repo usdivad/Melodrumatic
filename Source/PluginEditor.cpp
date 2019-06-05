@@ -59,13 +59,16 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     _dryWetSlider.setValue(dryWetParam->get());
     addAndMakeVisible(_dryWetSlider);
     
-    _dryWetSlider.onValueChange = [this, dryWetParam] {
+    _dryWetSlider.onValueChange = [this, dryWetParam]
+    {
         *dryWetParam = _dryWetSlider.getValue();
     };
-    _dryWetSlider.onDragStart = [dryWetParam] {
+    _dryWetSlider.onDragStart = [dryWetParam]
+    {
         dryWetParam->beginChangeGesture();
     };
-    _dryWetSlider.onDragEnd = [dryWetParam] {
+    _dryWetSlider.onDragEnd = [dryWetParam]
+    {
         dryWetParam->endChangeGesture();
     };
     
@@ -85,13 +88,16 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     _feedbackSlider.setValue(feedbackParam->get());
     addAndMakeVisible(_feedbackSlider);
     
-    _feedbackSlider.onValueChange = [this, feedbackParam] {
+    _feedbackSlider.onValueChange = [this, feedbackParam]
+    {
         *feedbackParam = _feedbackSlider.getValue();
     };
-    _feedbackSlider.onDragStart = [feedbackParam] {
+    _feedbackSlider.onDragStart = [feedbackParam]
+    {
         feedbackParam->beginChangeGesture();
     };
-    _feedbackSlider.onDragEnd = [feedbackParam] {
+    _feedbackSlider.onDragEnd = [feedbackParam]
+    {
         feedbackParam->endChangeGesture();
     };
     
@@ -112,14 +118,17 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     _delayTimeSmoothAmountSlider.setValue(delayTimeSmoothAmountParam->get());
     addAndMakeVisible(_delayTimeSmoothAmountSlider);
     
-    _delayTimeSmoothAmountSlider.onValueChange = [this, delayTimeSmoothAmountParam] {
+    _delayTimeSmoothAmountSlider.onValueChange = [this, delayTimeSmoothAmountParam]
+    {
         *delayTimeSmoothAmountParam = _delayTimeSmoothAmountSlider.getValue();
         DBG("delayTimeSmoothAmountParam=" << *delayTimeSmoothAmountParam);
     };
-    _delayTimeSmoothAmountSlider.onDragStart = [delayTimeSmoothAmountParam] {
+    _delayTimeSmoothAmountSlider.onDragStart = [delayTimeSmoothAmountParam]
+    {
         delayTimeSmoothAmountParam->beginChangeGesture();
     };
-    _delayTimeSmoothAmountSlider.onDragEnd = [delayTimeSmoothAmountParam] {
+    _delayTimeSmoothAmountSlider.onDragEnd = [delayTimeSmoothAmountParam]
+    {
         delayTimeSmoothAmountParam->endChangeGesture();
     };
     
@@ -140,7 +149,8 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     // // _interprocessPipeIdLabel.attachToComponent(&_delayTimeSlider, true);
     // addAndMakeVisible(_interprocessPipeSuffixTextEditor);
     //
-    // _interprocessPipeSuffixTextEditor.onTextChange = [this] {
+    // _interprocessPipeSuffixTextEditor.onTextChange = [this]
+    // {
     //     processor.setInterprocessPipeSuffix(_interprocessPipeSuffixTextEditor.getText(), false);
     // };
     //
@@ -180,14 +190,17 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     _delayTimeSlider.setValue(delayTimeParam->get());
     addAndMakeVisible(_delayTimeSlider);
     
-    _delayTimeSlider.onValueChange = [this, delayTimeParam] {
+    _delayTimeSlider.onValueChange = [this, delayTimeParam]
+    {
         *delayTimeParam = _delayTimeSlider.getValue();
         DBG("delayTimeParam=" << *delayTimeParam);
     };
-    _delayTimeSlider.onDragStart = [delayTimeParam] {
+    _delayTimeSlider.onDragStart = [delayTimeParam]
+    {
         delayTimeParam->beginChangeGesture();
     };
-    _delayTimeSlider.onDragEnd = [delayTimeParam] {
+    _delayTimeSlider.onDragEnd = [delayTimeParam]
+    {
         delayTimeParam->endChangeGesture();
     };
     

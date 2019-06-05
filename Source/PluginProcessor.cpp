@@ -203,14 +203,17 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     // bool isInterprocessConnectToPipeSuccessful = isConnected() && _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()] > 1;
     // DBG("_numProcessesConnectedToInterprocessPipe[" << getInterprocessPipeFullName() << "]=" << _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]);
     //
-    // if (!isInterprocessConnectToPipeSuccessful) {
+    // if (!isInterprocessConnectToPipeSuccessful)
+    // {
     //     bool isInterprocessConnectToPipeSuccessful = createOrConnectToInterprocessPipe();
     //
     //     // Print connection status
-    //     if (isInterprocessConnectToPipeSuccessful) {
+    //     if (isInterprocessConnectToPipeSuccessful)
+    //     {
     //         DBG(_processName << " (" << _trackProperties.name << "): " << "Reconnection to pipe succeeded");
     //     }
-    //     else {
+    //     else
+    //     {
     //         DBG(_processName << " (" << _trackProperties.name << "): " << "Reconnection to pipe failed");
     //     }
     // }
@@ -219,19 +222,23 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     // ================================================================
     // MIDI
     
-    if (!midiMessages.isEmpty()) {
+    if (!midiMessages.isEmpty())
+    {
         // Loop through MIDI messages
         MidiBuffer::Iterator midiMessagesIterator = MidiBuffer::Iterator(midiMessages);
         bool hasNewMidiMessages = true;
-        while (hasNewMidiMessages) {
+        while (hasNewMidiMessages)
+        {
             MidiMessage midiMessage;
             int midiSamplePosition;
             hasNewMidiMessages = midiMessagesIterator.getNextEvent(midiMessage, midiSamplePosition);
-            if (!midiMessage.isSysEx()) {
+            if (!midiMessage.isSysEx())
+            {
                 DBG(_processName << " (" << _trackProperties.name << "): " << "MIDI message : " << midiMessage.getDescription()); // TEMP
                 
                 // Only handle note-on messages
-                if (midiMessage.isNoteOn()) {
+                if (midiMessage.isNoteOn())
+                {
                     // Construct MIDI message in memory block
                     BigInteger midiNote = BigInteger(midiMessage.getNoteNumber());
                     MemoryBlock midiMessageToSend = MemoryBlock();
@@ -241,18 +248,22 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
                     *_delayTimeParam = jmax(midiNote.toInteger() + 1, 1);
                     
                     // Send message if connection was successful
-                    // if (isInterprocessConnectToPipeSuccessful) {
+                    // if (isInterprocessConnectToPipeSuccessful)
+                    // {
                     //     DBG(_processName << " (" << _trackProperties.name << "): " << "Sending MIDI message " << midiNote.toString(10));
                     //     bool didSendMessageSucceed = sendMessage(midiMessageToSend);
-                    //     if (didSendMessageSucceed) {
+                    //     if (didSendMessageSucceed)
+                    //     {
                     //         DBG(_processName << " (" << _trackProperties.name << "): " << "Send message succeeded");
                     //     }
-                    //     else {
+                    //     else
+                    //     {
                     //         DBG(_processName << " (" << _trackProperties.name << "): " << "Send message failed");
                     //
                     //     }
                     // }
-                    // else {
+                    // else
+                    // {
                     //     DBG(_processName << " (" << _trackProperties.name << "): " << "Not sending message because not connnected to pipe");
                     // }
                 }
@@ -290,7 +301,8 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
 //         // ..do something to the data...
 //     }
     
-    if (buffer.getNumChannels() < 1) {
+    if (buffer.getNumChannels() < 1)
+    {
         DBG("0 channels in buffer!");
         return;
     }
@@ -309,7 +321,8 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     float sampleValuesSquaredRight = 0;
     
     // Write to circular buffer
-    for (int i=0; i<buffer.getNumSamples(); i++) {
+    for (int i=0; i<buffer.getNumSamples(); i++)
+    {
         
         // Smooth delay
         // _delayTimeSmoothed = _delayTimeSmoothed - (_delayTimeSmoothAmount * (_delayTimeSmoothed - _delayTimeParam->get()));
@@ -323,7 +336,8 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         // _delayTimeInSamples = getSampleRate() * (1 / midiNoteToHz(_delayTimeParam->get())); // MIDI, no smoothing
         
         // This debug statement breaks performance
-        // if (_delayTimeInSamples != prevDelayTimeInSamples) {
+        // if (_delayTimeInSamples != prevDelayTimeInSamples)
+        // {
         //     DBG(_processName << " (" << _trackProperties.name << "): " << "_delayTimeInSamples=" << _delayTimeInSamples << ", sampleRate=" << getSampleRate());
         // }
         
@@ -335,7 +349,8 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         // Read from delayed position in buffer
         // _delayReadHead = _circularBufferWriteHead - _delayTimeInSamples;
         _delayReadHead = _circularBufferWriteHead - _delayTimeInSamples;
-        if (_delayReadHead < 0) {
+        if (_delayReadHead < 0)
+        {
             _delayReadHead += _circularBufferLength;
         }
         
@@ -343,7 +358,8 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         int delayReadHeadIntX0 = (int) _delayReadHead; // x0
         float delayReadHeadRemainderX0 = _delayReadHead - delayReadHeadIntX0; // t, i.e. inPhase
         int delayReadHeadIntX1 = delayReadHeadIntX0 + 1; // x1
-        if (delayReadHeadIntX1 >= _circularBufferLength) {
+        if (delayReadHeadIntX1 >= _circularBufferLength)
+        {
             delayReadHeadIntX1 -= _circularBufferLength;
         }
         
@@ -373,7 +389,8 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         // Increment write head
         // _circularBufferWriteHead = (_circularBufferWriteHead + 1) % _circularBufferLength;
         _circularBufferWriteHead++;
-        if (_circularBufferWriteHead >= _circularBufferLength) {
+        if (_circularBufferWriteHead >= _circularBufferLength)
+        {
             _circularBufferWriteHead = 0;
         }
         
@@ -439,7 +456,8 @@ void MelodrumaticAudioProcessor::setStateInformation (const void* data, int size
     std::unique_ptr<XmlElement> xml(getXmlFromBinary(data, sizeInBytes));
     
     // Set params based on state
-    if (xml.get() != nullptr && xml->hasTagName("Melodrumatic")) {
+    if (xml.get() != nullptr && xml->hasTagName("Melodrumatic"))
+    {
         *_dryWetParam = xml->getDoubleAttribute("dryWet");
         *_feedbackParam = xml->getDoubleAttribute("feedback");
         *_delayTimeParam = xml->getDoubleAttribute("delayTime");
@@ -499,23 +517,28 @@ bool MelodrumaticAudioProcessor::createOrConnectToInterprocessPipe()
         _hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()] = createPipe(getInterprocessPipeFullName(), _interprocessCreatePipeTimeoutMs, false);
         _didCurrentInstanceCreateInterprocessPipe = _hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()];
     }
-    else {
+    else
+    {
         // pass
     }
     
     // Connect to existing pipe
-    if (!_didCurrentInstanceCreateInterprocessPipe) {
+    if (!_didCurrentInstanceCreateInterprocessPipe)
+    {
         bool isInterprocessConnectToPipeSuccessful = connectToPipe(getInterprocessPipeFullName(), _interprocessConnectToPipeTimeoutMs);
-        if (!isInterprocessConnectToPipeSuccessful) {
+        if (!isInterprocessConnectToPipeSuccessful)
+        {
             DBG(_processName << " (" << _trackProperties.name << "): " << "Unsuccessful connection to pipe " << getInterprocessPipeFullName());
         }
-        else {
+        else
+        {
             DBG(_processName << " (" << _trackProperties.name << "): " << "Successfully connected to pipe " << getInterprocessPipeFullName());
             _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]++;
             return true;
         }
     }
-    else {
+    else
+    {
         DBG(_processName << " (" << _trackProperties.name << "): " << "Successfully created pipe " << getInterprocessPipeFullName());
         _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()] = 1; // Reset since we're recreating the pipe
         return true;
@@ -530,7 +553,8 @@ String MelodrumaticAudioProcessor::generateProcessName()
     Random rng;
     String name;
     
-    for (int i=0; i<10; i++) {
+    for (int i=0; i<10; i++)
+    {
         int n = rng.nextInt(9);
         name.append(String(n), 1);
     }
