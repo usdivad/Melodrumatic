@@ -4,7 +4,7 @@
               companyName="David Su" pluginCharacteristicsValue="pluginWantsMidiIn"
               bundleIdentifier="com.usdivad.Melodrumatic" companyWebsite="http://usdivad.com/"
               companyEmail="hello@usdivad.com" aaxIdentifier="com.usdivad.Melodrumatic"
-              pluginManufacturerCode="DDSU" pluginCode="F1B1" version="0.1.0"
+              pluginManufacturerCode="DDSU" pluginCode="F1B1" version="0.1.1"
               pluginFormats="buildAAX,buildAU,buildStandalone,buildVST3">
   <MAINGROUP id="HOfhMn" name="Melodrumatic">
     <GROUP id="{D108E745-BE2A-4105-7EB0-674D8CF6FA87}" name="Source">
