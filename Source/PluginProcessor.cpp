@@ -15,6 +15,13 @@
 std::map<String, bool> MelodrumaticAudioProcessor::_hasInterprocessPipeBeenCreated;
 std::map<String, int> MelodrumaticAudioProcessor::_numProcessesConnectedToInterprocessPipe;
 
+namespace juce
+{
+#if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client && JucePlugin_Build_Unity
+    bool juce_isRunningInUnity();
+#endif
+}
+
 //==============================================================================
 MelodrumaticAudioProcessor::MelodrumaticAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -418,6 +425,13 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
 //==============================================================================
 bool MelodrumaticAudioProcessor::hasEditor() const
 {
+#if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client && JucePlugin_Build_Unity
+    if (juce_isRunningInUnity())
+    {
+        return false; // Don't show GUI for Unity plugin, so that we can expose parameters
+    }
+#endif
+    
     return true; // (change this to false if you choose to not supply an editor)
 }
 
