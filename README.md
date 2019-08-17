@@ -11,13 +11,14 @@ Demo video: https://youtu.be/KpkDhlis1zw
 VST3, AU, AAX, Unity
 
 ## Installation
-Download the latest version of Melodrumatic from the [releases](https://github.com/usdivad/Melodrumatic/releases) page, then unzip and place the individual files into the appropriate plugin folders for your respective DAWs.
+Download the latest version of Melodrumatic from the [releases](https://github.com/usdivad/Melodrumatic/releases) page, then unzip and place the individual files into the appropriate plugin folders for your respective DAWs (or Unity!)
 
 For Mac, this usually means:
 ```
 VST3  -->  ~/Library/Audio/Plug-Ins/VST3
 AU    -->  ~/Library/Audio/Plug-Ins/Components
 AAX   -->  /Library/Application Support/Avid/Audio/Plug-Ins
+Unity -->  [YourProjectName]/Assets/Plugins
 ```
 
 And for Windows, this usually means:
@@ -25,9 +26,10 @@ And for Windows, this usually means:
 VST3  -->  C:\Program Files\Common Files\VST3
 AU    -->  Not supported :(
 AAX   -->  C:\Program Files\Common Files\Avid\Audio\Plug-Ins
+Unity -->  [YourProjectName]\Assets\Plugins
 ```
 
-For Unity projects, install the plugin into `[YourProjectName]/Assets/Plugins`.
+For Unity projects, install the plugin (*audioplugin_Melodrumatic.bundle*) into `[YourProjectName]/Assets/Plugins`.
 
 
 ## Usage
@@ -67,4 +69,4 @@ For Unity projects, install the plugin into `[YourProjectName]/Assets/Plugins`.
 *NOTE: Since the Unity plugin normalizes parameter values to a 0-1 range, in order to treat the Delay Time parameter as MIDI notes you'll need to re-scale the values. This can be done by quantizing values to steps of 0.0078125 (i.e. 1/128).*
 
 ## Contact
-Please [get in touch](mailto:hello@usdivad.com) if you end up making any cool music or sounds using this, as well as if you have any questions or comments!
+Please [get in touch](mailto:hello@usdivad.com) if you end up making any cool music, sounds, or games using this, as well as if you have any questions or comments!
