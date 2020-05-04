@@ -29,7 +29,7 @@ AAX   -->  C:\Program Files\Common Files\Avid\Audio\Plug-Ins
 Unity -->  [YourProjectName]\Assets\Plugins
 ```
 
-For Unity projects, install the plugin (*audioplugin_Melodrumatic.bundle*) into `[YourProjectName]/Assets/Plugins`.
+For Unity projects, install the plugin (*audioplugin_Melodrumatic.bundle* on Mac, *audioplugin_Melodrumatic.dll* + *audioplugin_Melodrumatic_UnityScript.cs* on Windows) into `[YourProjectName]/Assets/Plugins`.
 
 
 ## Usage
