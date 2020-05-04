@@ -59,6 +59,7 @@ private:
     Label _titleLabel;
     Label _interprocessPipeSuffixTextEditor; // Yes, it's technically a label, but it's editable
     Label _interprocessPipeSuffixLabel;
+    Label _versionLabel;
     
     // Keys!
     MidiKeyboardState _midiKeyboardState;

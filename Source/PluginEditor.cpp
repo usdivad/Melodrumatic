@@ -247,6 +247,15 @@ MelodrumaticAudioProcessorEditor::MelodrumaticAudioProcessorEditor (Melodrumatic
     _logoHyperlink.setURL(logoURL);
     _logoHyperlink.setBounds(getWidth() - logoImageDestWidth - 15, 10, logoImageDestWidth, logoImageDestHeight);
     addAndMakeVisible(_logoHyperlink);
+
+
+    // Version label
+    _versionLabel.setBounds(15, getHeight() * 0.9f, 75, 25);
+    _versionLabel.setJustificationType(Justification::centredLeft);
+    _versionLabel.setFont(_lookAndFeel.getGSRegularFont());
+    _versionLabel.setColour(Label::ColourIds::textColourId, Colours::white);
+    _versionLabel.setText(JucePlugin_VersionString, NotificationType::dontSendNotification);
+    addAndMakeVisible(_versionLabel);
     
     
     // ================================================================
