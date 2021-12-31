@@ -40,32 +40,16 @@ MelodrumaticAudioProcessor::MelodrumaticAudioProcessor()
     // Circular buffers are set to null pointers because we don't know sample rate yet, and thus don't know how to instantiate the audio data. These will be set in prepareToPlay()
     _circularBufferLeft = nullptr;
     _circularBufferRight = nullptr;
-    _circularBufferWriteHead = 0;
-    _circularBufferLength = 0;
-    
-    _delayTimeInSamples = 0;
-    _delayReadHead = 0;
-    _delayTimeSmoothed = 0;
-    // _delayTimeSmoothAmount = 0;
-    
-    _feedbackLeft = 0;
-    _feedbackRight = 0;
-    
     
     // Interprocess
-    // _interprocessPipeName = "MELODRUMATIC_INTERPROCESS_PIPE_" + generateProcessName();
-    _didCurrentInstanceCreateInterprocessPipe = false;
-    _processName = generateProcessName();
-    _interprocessPipeSuffix = "DEFAULT";
     initializeInterprocessStaticVariables();
-    // createOrConnectToInterprocessPipe(); // Create pipe, or connect to existing pipe
+    createOrConnectToInterprocessPipe(); // Create pipe, or connect to existing pipe
     
     // Parameters
-    addParameter(_dryWetParam = new AudioParameterFloat("dryWet", "Dry/Wet", 0, 1, 0.5));
-    addParameter(_feedbackParam = new AudioParameterFloat("feedback", "Feedback", 0, 0.98, 0.5));
-    // addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", 0.01, _maxDelayTime, 0.5));
+    addParameter(_dryWetParam = new AudioParameterFloat("dryWet", "Dry/Wet", 0.f, 1.f, 0.5f));
+    addParameter(_feedbackParam = new AudioParameterFloat("feedback", "Feedback", 0.f, 0.98f, 0.5f));
     addParameter(_delayTimeParam = new AudioParameterFloat("delayTime", "Delay Time", _minDelayTime, _maxDelayTime, _maxDelayTime));
-    addParameter(_delayTimeSmoothAmountParam = new AudioParameterFloat("delayTimeSmoothAmount", "Glissando", _minDelayTimeSmoothAmount, _maxDelayTimeSmoothAmount, 0.1));
+    addParameter(_delayTimeSmoothAmountParam = new AudioParameterFloat("delayTimeSmoothAmount", "Glissando", _minDelayTimeSmoothAmount, _maxDelayTimeSmoothAmount, 0.1f));
 }
 
 MelodrumaticAudioProcessor::~MelodrumaticAudioProcessor()
@@ -156,10 +140,8 @@ void MelodrumaticAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
     // Delay time
     _delayTimeInSamples = sampleRate * _delayTimeParam->get();
     _delayTimeSmoothed = _delayTimeParam->get();
-    // _delayTimeSmoothAmount = _delayTimeSmoothAmountParam->get();
     
     // Calculate circular buffer length based on sample rate
-    // _circularBufferLength = (int)(sampleRate * jmax(_maxDelayTime, _maxDelayTimeSmoothAmount));
     _circularBufferLength = (int)(sampleRate * _maxDelayTime);
     
     // Initialize circular buffers based on sample rate and delay time
@@ -204,29 +186,6 @@ bool MelodrumaticAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
 void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     // ================================================================
-    // Interprocess
-    
-    // Connect (in case we lost the connection)
-    // bool isInterprocessConnectToPipeSuccessful = isConnected() && _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()] > 1;
-    // DBG("_numProcessesConnectedToInterprocessPipe[" << getInterprocessPipeFullName() << "]=" << _numProcessesConnectedToInterprocessPipe[getInterprocessPipeFullName()]);
-    //
-    // if (!isInterprocessConnectToPipeSuccessful)
-    // {
-    //     bool isInterprocessConnectToPipeSuccessful = createOrConnectToInterprocessPipe();
-    //
-    //     // Print connection status
-    //     if (isInterprocessConnectToPipeSuccessful)
-    //     {
-    //         DBG(_processName << " (" << _trackProperties.name << "): " << "Reconnection to pipe succeeded");
-    //     }
-    //     else
-    //     {
-    //         DBG(_processName << " (" << _trackProperties.name << "): " << "Reconnection to pipe failed");
-    //     }
-    // }
-    
-    
-    // ================================================================
     // MIDI
     
     if (!midiMessages.isEmpty())
@@ -253,26 +212,6 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
                     
                     // Update our own "delayTimeParam" just to keep UI consistent
                     *_delayTimeParam = jmax(midiNote.toInteger() + 1, 1);
-                    
-                    // Send message if connection was successful
-                    // if (isInterprocessConnectToPipeSuccessful)
-                    // {
-                    //     DBG(_processName << " (" << _trackProperties.name << "): " << "Sending MIDI message " << midiNote.toString(10));
-                    //     bool didSendMessageSucceed = sendMessage(midiMessageToSend);
-                    //     if (didSendMessageSucceed)
-                    //     {
-                    //         DBG(_processName << " (" << _trackProperties.name << "): " << "Send message succeeded");
-                    //     }
-                    //     else
-                    //     {
-                    //         DBG(_processName << " (" << _trackProperties.name << "): " << "Send message failed");
-                    //
-                    //     }
-                    // }
-                    // else
-                    // {
-                    //     DBG(_processName << " (" << _trackProperties.name << "): " << "Not sending message because not connnected to pipe");
-                    // }
                 }
                 
             }
@@ -295,19 +234,7 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-//     for (int channel = 0; channel < totalNumInputChannels; ++channel)
-//     {
-//         auto* channelData = buffer.getWritePointer (channel);
-//
-//         // ..do something to the data...
-//     }
-    
+    // Check for valid num channels
     if (buffer.getNumChannels() < 1)
     {
         DBG("0 channels in buffer!");
@@ -315,7 +242,6 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     }
     
     // Get write pointers for left and right channels
-    // TODO: Ensure this works for mono and > 2 channels!
     bool isMono = buffer.getNumChannels() == 1;
     int leftChannelIdx = 0;
     int rightChannelIdx = isMono ? 0 : 1;
@@ -332,21 +258,10 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     {
         
         // Smooth delay
-        // _delayTimeSmoothed = _delayTimeSmoothed - (_delayTimeSmoothAmount * (_delayTimeSmoothed - _delayTimeParam->get()));
         _delayTimeSmoothed = _delayTimeSmoothed - (jmax((_maxDelayTimeSmoothAmount - _delayTimeSmoothAmountParam->get()), _minDelayTimeSmoothAmount) * _delayTimeMultiplier * (_delayTimeSmoothed - _delayTimeParam->get()));
-        // DBG("Multiplied smooth param=" << _delayTimeSmoothAmountParam->get() * _delayTimeMultiplier);
         
         // Update delay time in samples based on sample rate, smoothed, and multiplier
-        float prevDelayTimeInSamples = _delayTimeInSamples;
-        // _delayTimeInSamples = getSampleRate() * _delayTimeSmoothed * _delayTimeMultiplier; // Using smoothed delay time with multiplier
-        _delayTimeInSamples = getSampleRate() * (1 / midiNoteToHz(_delayTimeSmoothed)); // MIDI, with smoothing
-        // _delayTimeInSamples = getSampleRate() * (1 / midiNoteToHz(_delayTimeParam->get())); // MIDI, no smoothing
-        
-        // This debug statement breaks performance
-        // if (_delayTimeInSamples != prevDelayTimeInSamples)
-        // {
-        //     DBG(_processName << " (" << _trackProperties.name << "): " << "_delayTimeInSamples=" << _delayTimeInSamples << ", sampleRate=" << getSampleRate());
-        // }
+        _delayTimeInSamples = getSampleRate() * (1 / midiNoteToHz(_delayTimeSmoothed));
         
         // Write sample to circular buffer
         // and also add feedback
@@ -354,7 +269,6 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         _circularBufferRight[_circularBufferWriteHead] = rightChannel[i] + _feedbackRight;
         
         // Read from delayed position in buffer
-        // _delayReadHead = _circularBufferWriteHead - _delayTimeInSamples;
         _delayReadHead = _circularBufferWriteHead - _delayTimeInSamples;
         if (_delayReadHead < 0)
         {
@@ -362,8 +276,8 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         }
         
         // Lerp!
-        int delayReadHeadIntX0 = (int) _delayReadHead; // x0
-        float delayReadHeadRemainderX0 = _delayReadHead - delayReadHeadIntX0; // t, i.e. inPhase
+        const int delayReadHeadIntX0 = (int) _delayReadHead; // x0
+        const float delayReadHeadRemainderX0 = _delayReadHead - delayReadHeadIntX0; // t, i.e. inPhase
         int delayReadHeadIntX1 = delayReadHeadIntX0 + 1; // x1
         if (delayReadHeadIntX1 >= _circularBufferLength)
         {
@@ -371,20 +285,16 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         }
         
         // Get current delay sample for applying feedback
-        float delaySampleLeft = lerp(_circularBufferLeft[(int)delayReadHeadIntX0],
+        const float delaySampleLeft = lerp(_circularBufferLeft[(int)delayReadHeadIntX0],
                                      _circularBufferLeft[(int)delayReadHeadIntX1],
                                      delayReadHeadRemainderX0);
-        float delaySampleRight = lerp(_circularBufferRight[(int)delayReadHeadIntX0],
+        const float delaySampleRight = lerp(_circularBufferRight[(int)delayReadHeadIntX0],
                                      _circularBufferRight[(int)delayReadHeadIntX1],
                                      delayReadHeadRemainderX0);
         
         // Apply feedback (for next iteration)
         _feedbackLeft = delaySampleLeft * _feedbackParam->get();
         _feedbackRight = delaySampleRight * _feedbackParam->get();
-        
-        // // Add the samples to the output buffer
-        // buffer.addSample(0, i, delaySampleLeft);
-        // buffer.addSample(1, i, delaySampleRight);
         
         // Sum the dry and wet (delayed) samples
         buffer.setSample(leftChannelIdx, i, (buffer.getSample(leftChannelIdx, i) * (1 - _dryWetParam->get())) +
@@ -393,8 +303,7 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
                          (delaySampleLeft * _dryWetParam->get()));
         
         
-        // Increment write head
-        // _circularBufferWriteHead = (_circularBufferWriteHead + 1) % _circularBufferLength;
+        // Increment write head and wrap-around
         _circularBufferWriteHead++;
         if (_circularBufferWriteHead >= _circularBufferLength)
         {
@@ -403,32 +312,28 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
         
         
         // Add to total values
-        float sampleValueLeft = buffer.getSample(leftChannelIdx, i);
-        float sampleValueRight = buffer.getSample(rightChannelIdx, i);
+        const float sampleValueLeft = buffer.getSample(leftChannelIdx, i);
+        const float sampleValueRight = buffer.getSample(rightChannelIdx, i);
         
         sampleValuesSquaredLeft += sampleValueLeft * sampleValueLeft;
         sampleValuesSquaredRight += sampleValueRight * sampleValueRight;
     }
     
     // Compute RMSE
-    float sampleValuesSquared = (sampleValuesSquaredLeft + sampleValuesSquaredRight) * 0.5;
-    float sampleValuesSquaredAvg = sampleValuesSquared / buffer.getNumSamples();
+    const float sampleValuesSquared = (sampleValuesSquaredLeft + sampleValuesSquaredRight) * 0.5f; // Both channels combined
+    const float sampleValuesSquaredAvg = sampleValuesSquared / buffer.getNumSamples();
     _rmse = sqrt(sampleValuesSquaredAvg);
-    
-    
-    // float sampleAvgLeft = sampleValuesLeft / buffer.getNumSamples();
-    // float sampleAvgRight = sampleValuesRight / buffer.getNumSamples();
-    // float sampleAvgCombined = (sampleAvgLeft + sampleAvgRight) * 0.5;
-    
 }
 
 //==============================================================================
 bool MelodrumaticAudioProcessor::hasEditor() const
 {
+
+// Don't show GUI for Unity plugin, so that we can expose parameters
 #if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client && JucePlugin_Build_Unity
     if (juce_isRunningInUnity())
     {
-        return false; // Don't show GUI for Unity plugin, so that we can expose parameters
+        return false;
     }
 #endif
     
@@ -504,27 +409,25 @@ void MelodrumaticAudioProcessor::messageReceived(const MemoryBlock &message)
     DBG(_processName << " (" << _trackProperties.name << "): " << "The MIDI note is " << midiNote.toString(10));
 
     // Convert MIDI to delay time
-    // TODO:
-    // - Update UI accordingly
-    // *_delayTimeParam = jmax(128.0 - midiNote.toInteger(), 1.0);
     *_delayTimeParam = jmax(midiNote.toInteger() + 1, 1);
 }
 
 //==============================================================================
 // Custom
 
-
-// Linear interpolation
 float MelodrumaticAudioProcessor::lerp(float x0, float x1, float t)
 {
     return (1 - t) * x0 + t * x1;
 }
 
-// Create pipe, or connect to existing pipe
 bool MelodrumaticAudioProcessor::createOrConnectToInterprocessPipe()
 {
+    if (!_shouldCreateInterprocessPipe)
+    {
+        return false;
+    }
+    
     // Create pipe
-    // _didCurrentInstanceCreateInterprocessPipe = false;
     DBG("_hasInterprocessPipeBeenCreated[" << getInterprocessPipeFullName() << "]=" << (_hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()] ? "true" : "false"));
     if (!_hasInterprocessPipeBeenCreated[getInterprocessPipeFullName()])
     {
@@ -561,7 +464,6 @@ bool MelodrumaticAudioProcessor::createOrConnectToInterprocessPipe()
     return false;
 }
 
-// Generate a random process name
 String MelodrumaticAudioProcessor::generateProcessName()
 {
     Random rng;
@@ -569,18 +471,16 @@ String MelodrumaticAudioProcessor::generateProcessName()
     
     for (int i=0; i<10; i++)
     {
-        int n = rng.nextInt(9);
+        const int n = rng.nextInt(9);
         name.append(String(n), 1);
     }
     
     return name;
 }
 
-// Convert MIDI note to frequency in Hz
 float MelodrumaticAudioProcessor::midiNoteToHz(float midiNote)
 {
     return (440/32) * (pow(2, (midiNote-9)/12));
-    // return 13.75 * (pow(2, (midiNote-9) * 0.08333333333)); // Not accurate enough :(
 }
 
 void MelodrumaticAudioProcessor::initializeInterprocessStaticVariables()

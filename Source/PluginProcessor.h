@@ -60,7 +60,6 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-
     
     //==============================================================================
     // InterprocessConnection virtual methods
@@ -69,70 +68,76 @@ public:
     void messageReceived(const MemoryBlock& message) override;
     
     //==============================================================================
-    // Custom
-    float lerp(float x0, float x1, float t); // t = "inPhase"
-    bool createOrConnectToInterprocessPipe();
-    String generateProcessName();
-    float midiNoteToHz(float midiNote);
-    // double fastPow(double a, double b); // Not accurate enough
-    void initializeInterprocessStaticVariables();
-    String getInterprocessPipeFullName();
-    void setInterprocessPipeSuffix(String suffix, bool fromSetStateInformation);
-    String getInterprocessPipeSuffix();
+    // Get the RMSE based on latest sample values
     float getRMSE();
     
-private:
+private:    
+    //==============================================================================
+    // Helpers
+    
+    // Calculate linear interpolation for given values
+    float lerp(float x0, float x1, float t); // t = "inPhase"
+            
+    // Convert MIDI note to frequency in Hz
+    float midiNoteToHz(float midiNote);
+    
+    // Interprocess helpers
+    bool createOrConnectToInterprocessPipe();
+    void initializeInterprocessStaticVariables();
+    String generateProcessName();
+    String getInterprocessPipeFullName();
+    String getInterprocessPipeSuffix();
+    void setInterprocessPipeSuffix(String suffix, bool fromSetStateInformation);
+    
+    
     //==============================================================================
     // Constants for delay
-    const float _minDelayTime = 1.0; // Min and max time are basically MIDI values now
-    const float _maxDelayTime = 127.0;
-    const float _delayTimeMultiplier = 0.002;
-    const float _delayTimeSmoothAmount = 0.02; // OLD: Higher (0.1) for discrete (MIDI note), lower (0.001) if we're going more continuous (knob/MIDI CC)
-    const float _minDelayTimeSmoothAmount = 0.01;
-    const float _maxDelayTimeSmoothAmount = 1.0; // Normalized, 0-1
+    const float _minDelayTime = 1.f; // Min and max time are basically MIDI values now
+    const float _maxDelayTime = 127.f;
+    const float _delayTimeMultiplier = 0.002f;
+    const float _minDelayTimeSmoothAmount = 0.01f;
+    const float _maxDelayTimeSmoothAmount = 1.f; // Normalized, 0-1
     
     
     //==============================================================================
     // Circular buffer
-    std::unique_ptr<float[]> _circularBufferLeft;
-    std::unique_ptr<float[]> _circularBufferRight;
-    int _circularBufferWriteHead;
-    int _circularBufferLength;
+    std::unique_ptr<float[]> _circularBufferLeft = nullptr;
+    std::unique_ptr<float[]> _circularBufferRight = nullptr;
+    int _circularBufferWriteHead = 0;
+    int _circularBufferLength = 0;
     
     // Delay
-    float _delayTimeInSamples;
-    float _delayReadHead;
-    float _delayTimeSmoothed;
+    float _delayTimeInSamples = 0.f;
+    float _delayReadHead = 0.f;
+    float _delayTimeSmoothed = 0.f;
     
     // Feedback
-    float _feedbackLeft;
-    float _feedbackRight;
-    
-    // MIDI
-    // int _mostRecentMidiNote;
+    float _feedbackLeft = 0.f;
+    float _feedbackRight = 0.f;
     
     // RMSE
-    float _rmse;
+    float _rmse = 0.f;
     
 
     //==============================================================================
     // Interprocess
     const int _interprocessCreatePipeTimeoutMs = -1;
-    const int _interprocessConnectToPipeTimeoutMs = -1; // TODO: Figure out whether it's better to leave this as -1 (infinite timeout) or to set it to disconnect/reconnect at e.g. 50-100ms
+    const int _interprocessConnectToPipeTimeoutMs = -1; // (Infinite timeout)
     const String _interprocessPipeBaseName = "MELODRUMATIC_INTERPROCESS_PIPE";
-    String _processName;
-    String _interprocessPipeSuffix;
-    bool _didCurrentInstanceCreateInterprocessPipe;
+    String _processName = generateProcessName();
+    String _interprocessPipeSuffix = "DEFAULT";
+    bool _didCurrentInstanceCreateInterprocessPipe = false;
+    const bool _shouldCreateInterprocessPipe = false; // Skip IPC as of v0.1
     
     //==============================================================================
-    TrackProperties _trackProperties;
+    TrackProperties _trackProperties = {};
     
     //==============================================================================
     // User-controlled parameters
-    AudioParameterFloat* _dryWetParam;
-    AudioParameterFloat* _feedbackParam;
-    AudioParameterFloat* _delayTimeParam;
-    AudioParameterFloat* _delayTimeSmoothAmountParam;
+    AudioParameterFloat* _dryWetParam = nullptr;
+    AudioParameterFloat* _feedbackParam = nullptr;
+    AudioParameterFloat* _delayTimeParam = nullptr;
+    AudioParameterFloat* _delayTimeSmoothAmountParam = nullptr;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MelodrumaticAudioProcessor)
