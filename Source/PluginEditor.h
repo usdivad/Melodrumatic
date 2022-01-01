@@ -35,9 +35,20 @@ public:
     void handleNoteOff(MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity) override;
 
 private:
+    //==============================================================================
+    // Initialization methods
+    
+    void initEditorWindow(); // Size, resizability
+    void initPluginInfoUI(); // Title, logo, version num
+    void initDelayTimeUI(); // The main param: MIDI keyboard, slider, label
+    void initAdditionalParamsUI(); // Dry/wet, feedback, smooth amount
+    void initInterprocessUI(); // IPC text editor
+    
+    //==============================================================================
+
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    MelodrumaticAudioProcessor& processor;
+    MelodrumaticAudioProcessor& _processor;
     
     //==============================================================================
     

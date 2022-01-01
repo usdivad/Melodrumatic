@@ -68,8 +68,16 @@ public:
     void messageReceived(const MemoryBlock& message) override;
     
     //==============================================================================
-    // Get the RMSE based on latest sample values
-    float getRMSE();
+    // Getters + setters
+    
+    float getRMSE() const;
+    
+    bool getShouldCreateInterprocessPipe() const;
+    
+    String getInterprocessPipeFullName() const;
+    
+    String getInterprocessPipeSuffix() const;
+    void setInterprocessPipeSuffix(const String& suffix, bool fromSetStateInformation);
     
 private:
     //==============================================================================
@@ -90,10 +98,6 @@ private:
     bool createOrConnectToInterprocessPipe();
     void initializeInterprocessStaticVariables();
     String generateProcessName();
-    String getInterprocessPipeFullName();
-    String getInterprocessPipeSuffix();
-    void setInterprocessPipeSuffix(String suffix, bool fromSetStateInformation);
-    
     
     //==============================================================================
     // Constants for delay

@@ -497,12 +497,12 @@ void MelodrumaticAudioProcessor::initializeInterprocessStaticVariables()
 }
 
 
-String MelodrumaticAudioProcessor::getInterprocessPipeFullName()
+String MelodrumaticAudioProcessor::getInterprocessPipeFullName() const
 {
     return _interprocessPipeBaseName + String("_") + _interprocessPipeSuffix;
 }
 
-void MelodrumaticAudioProcessor::setInterprocessPipeSuffix(String suffix, bool fromSetStateInformation)
+void MelodrumaticAudioProcessor::setInterprocessPipeSuffix(const String& suffix, bool fromSetStateInformation)
 {
     // Update variables for current pipe
     if (!fromSetStateInformation)
@@ -525,14 +525,19 @@ void MelodrumaticAudioProcessor::setInterprocessPipeSuffix(String suffix, bool f
     initializeInterprocessStaticVariables(); // Add to map
 }
 
-String MelodrumaticAudioProcessor::getInterprocessPipeSuffix()
+String MelodrumaticAudioProcessor::getInterprocessPipeSuffix() const
 {
     return _interprocessPipeSuffix;
 }
 
-float MelodrumaticAudioProcessor::getRMSE()
+float MelodrumaticAudioProcessor::getRMSE() const
 {
     return _rmse;
+}
+
+bool MelodrumaticAudioProcessor::getShouldCreateInterprocessPipe() const
+{
+    return _shouldCreateInterprocessPipe;
 }
 
 
