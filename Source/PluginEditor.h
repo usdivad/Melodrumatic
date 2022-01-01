@@ -69,8 +69,8 @@ private:
     HyperlinkButton _titleHyperlink;
     HyperlinkButton _logoHyperlink;
     
-    // Misc
-    float _prevRMSE;
+    // RMSE
+    float _prevRMSE = 0.f;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MelodrumaticAudioProcessorEditor)
 };
