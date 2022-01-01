@@ -185,43 +185,107 @@ bool MelodrumaticAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
 
 void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
-    // ================================================================
     // MIDI
+    processMidi(midiMessages);
     
-    if (!midiMessages.isEmpty())
-    {
-        // Loop through MIDI messages
-        MidiBuffer::Iterator midiMessagesIterator = MidiBuffer::Iterator(midiMessages);
-        bool hasNewMidiMessages = true;
-        while (hasNewMidiMessages)
-        {
-            MidiMessage midiMessage;
-            int midiSamplePosition;
-            hasNewMidiMessages = midiMessagesIterator.getNextEvent(midiMessage, midiSamplePosition);
-            if (!midiMessage.isSysEx())
-            {
-                DBG(_processName << " (" << _trackProperties.name << "): " << "MIDI message : " << midiMessage.getDescription()); // TEMP
-                
-                // Only handle note-on messages
-                if (midiMessage.isNoteOn())
-                {
-                    // Construct MIDI message in memory block
-                    BigInteger midiNote = BigInteger(midiMessage.getNoteNumber());
-                    MemoryBlock midiMessageToSend = MemoryBlock();
-                    midiMessageToSend.insert(&midiNote, sizeof(BigInteger), 0);
-                    
-                    // Update our own "delayTimeParam" just to keep UI consistent
-                    *_delayTimeParam = jmax(midiNote.toInteger() + 1, 1);
-                }
-                
-            }
-        }
-    }
-    
-    // ================================================================
     // Audio
+    processAudio(buffer);
+}
+
+//==============================================================================
+bool MelodrumaticAudioProcessor::hasEditor() const
+{
+
+// Don't show GUI for Unity plugin, so that we can expose parameters
+#if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client && JucePlugin_Build_Unity
+    if (juce_isRunningInUnity())
+    {
+        return false;
+    }
+#endif
     
+    return true; // (change this to false if you choose to not supply an editor)
+}
+
+AudioProcessorEditor* MelodrumaticAudioProcessor::createEditor()
+{
+    return new MelodrumaticAudioProcessorEditor (*this);
+}
+
+//==============================================================================
+void MelodrumaticAudioProcessor::getStateInformation (MemoryBlock& destData)
+{
+    // You should use this method to store your parameters in the memory block.
+    // You could do that either as raw data, or use the XML or ValueTree classes
+    // as intermediaries to make it easy to save and load complex data.
+    
+    // Create XML
+    std::unique_ptr<XmlElement> xml(new XmlElement("Melodrumatic"));
+    
+    // Populate with params
+    xml->setAttribute("dryWet", _dryWetParam->get());
+    xml->setAttribute("feedback", _feedbackParam->get());
+    xml->setAttribute("delayTime", _delayTimeParam->get());
+    xml->setAttribute("delayTimeSmoothAmount", _delayTimeSmoothAmountParam->get());
+    xml->setAttribute("interprocessPipeSuffix", _interprocessPipeSuffix);
+    
+    // Copy the XML data to destination blob
+    copyXmlToBinary(*xml, destData);
+}
+
+void MelodrumaticAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+{
+    // You should use this method to restore your parameters from this memory block,
+    // whose contents will have been created by the getStateInformation() call.
+    
+    // Create XML from state data
+    std::unique_ptr<XmlElement> xml(getXmlFromBinary(data, sizeInBytes));
+    
+    // Set params based on state
+    if (xml.get() != nullptr && xml->hasTagName("Melodrumatic"))
+    {
+        *_dryWetParam = xml->getDoubleAttribute("dryWet");
+        *_feedbackParam = xml->getDoubleAttribute("feedback");
+        *_delayTimeParam = xml->getDoubleAttribute("delayTime");
+        *_delayTimeSmoothAmountParam = xml->getDoubleAttribute("delayTimeSmoothAmount");
+        
+        setInterprocessPipeSuffix(xml->getStringAttribute("interprocessPipeSuffix"), true);
+    }
+}
+
+//==============================================================================
+void MelodrumaticAudioProcessor::connectionMade()
+{
+    DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Connection made");
+}
+
+void MelodrumaticAudioProcessor::connectionLost()
+{
+    DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Connection lost");
+}
+
+void MelodrumaticAudioProcessor::messageReceived(const MemoryBlock &message)
+{
+    DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Message received: " << message.toString());
+    
+    // Get the MIDI note from the message
+    const void* messageData = message.getData();
+    const BigInteger* midiNotePtr = static_cast<const BigInteger*>(messageData);
+    const BigInteger midiNote = *midiNotePtr;
+    
+    DBG(_processName << " (" << _trackProperties.name << "): " << "The MIDI note is " << midiNote.toString(10));
+
+    // Convert MIDI to delay time
+    *_delayTimeParam = jmax(midiNote.toInteger() + 1, 1);
+}
+
+//==============================================================================
+// Custom
+
+void MelodrumaticAudioProcessor::processAudio(AudioBuffer<float>& buffer)
+{
     ScopedNoDenormals noDenormals;
+    
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
@@ -325,95 +389,38 @@ void MelodrumaticAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     _rmse = sqrt(sampleValuesSquaredAvg);
 }
 
-//==============================================================================
-bool MelodrumaticAudioProcessor::hasEditor() const
+void MelodrumaticAudioProcessor::processMidi(MidiBuffer& midiMessages)
 {
-
-// Don't show GUI for Unity plugin, so that we can expose parameters
-#if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client && JucePlugin_Build_Unity
-    if (juce_isRunningInUnity())
+    if (!midiMessages.isEmpty())
     {
-        return false;
-    }
-#endif
-    
-    return true; // (change this to false if you choose to not supply an editor)
-}
-
-AudioProcessorEditor* MelodrumaticAudioProcessor::createEditor()
-{
-    return new MelodrumaticAudioProcessorEditor (*this);
-}
-
-//==============================================================================
-void MelodrumaticAudioProcessor::getStateInformation (MemoryBlock& destData)
-{
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
-    
-    // Create XML
-    std::unique_ptr<XmlElement> xml(new XmlElement("Melodrumatic"));
-    
-    // Populate with params
-    xml->setAttribute("dryWet", _dryWetParam->get());
-    xml->setAttribute("feedback", _feedbackParam->get());
-    xml->setAttribute("delayTime", _delayTimeParam->get());
-    xml->setAttribute("delayTimeSmoothAmount", _delayTimeSmoothAmountParam->get());
-    xml->setAttribute("interprocessPipeSuffix", _interprocessPipeSuffix);
-    
-    // Copy the XML data to destination blob
-    copyXmlToBinary(*xml, destData);
-}
-
-void MelodrumaticAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
-{
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
-    
-    // Create XML from state data
-    std::unique_ptr<XmlElement> xml(getXmlFromBinary(data, sizeInBytes));
-    
-    // Set params based on state
-    if (xml.get() != nullptr && xml->hasTagName("Melodrumatic"))
-    {
-        *_dryWetParam = xml->getDoubleAttribute("dryWet");
-        *_feedbackParam = xml->getDoubleAttribute("feedback");
-        *_delayTimeParam = xml->getDoubleAttribute("delayTime");
-        *_delayTimeSmoothAmountParam = xml->getDoubleAttribute("delayTimeSmoothAmount");
-        
-        setInterprocessPipeSuffix(xml->getStringAttribute("interprocessPipeSuffix"), true);
+        // Loop through MIDI messages
+        MidiBuffer::Iterator midiMessagesIterator = MidiBuffer::Iterator(midiMessages);
+        bool hasNewMidiMessages = true;
+        while (hasNewMidiMessages)
+        {
+            MidiMessage midiMessage;
+            int midiSamplePosition;
+            hasNewMidiMessages = midiMessagesIterator.getNextEvent(midiMessage, midiSamplePosition);
+            if (!midiMessage.isSysEx())
+            {
+                DBG(_processName << " (" << _trackProperties.name << "): " << "MIDI message : " << midiMessage.getDescription()); // TEMP
+                
+                // Only handle note-on messages
+                if (midiMessage.isNoteOn())
+                {
+                    // Construct MIDI message in memory block
+                    BigInteger midiNote = BigInteger(midiMessage.getNoteNumber());
+                    MemoryBlock midiMessageToSend = MemoryBlock();
+                    midiMessageToSend.insert(&midiNote, sizeof(BigInteger), 0);
+                    
+                    // Update our own "delayTimeParam" just to keep UI consistent
+                    *_delayTimeParam = jmax(midiNote.toInteger() + 1, 1);
+                }
+                
+            }
+        }
     }
 }
-
-//==============================================================================
-void MelodrumaticAudioProcessor::connectionMade()
-{
-    DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Connection made");
-}
-
-void MelodrumaticAudioProcessor::connectionLost()
-{
-    DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Connection lost");
-}
-
-void MelodrumaticAudioProcessor::messageReceived(const MemoryBlock &message)
-{
-    DBG(_processName << " (" << _trackProperties.name << "): " << "IPC: Message received: " << message.toString());
-    
-    // Get the MIDI note from the message
-    const void* messageData = message.getData();
-    const BigInteger* midiNotePtr = static_cast<const BigInteger*>(messageData);
-    const BigInteger midiNote = *midiNotePtr;
-    
-    DBG(_processName << " (" << _trackProperties.name << "): " << "The MIDI note is " << midiNote.toString(10));
-
-    // Convert MIDI to delay time
-    *_delayTimeParam = jmax(midiNote.toInteger() + 1, 1);
-}
-
-//==============================================================================
-// Custom
 
 float MelodrumaticAudioProcessor::lerp(float x0, float x1, float t)
 {

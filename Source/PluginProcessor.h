@@ -71,7 +71,12 @@ public:
     // Get the RMSE based on latest sample values
     float getRMSE();
     
-private:    
+private:
+    //==============================================================================
+    // Internal processing methods (called in processBlock())
+    void processAudio(AudioBuffer<float>& buffer);
+    void processMidi(MidiBuffer& midiMessages);
+    
     //==============================================================================
     // Helpers
     
